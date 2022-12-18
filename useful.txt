@@ -1,0 +1,6 @@
+Outdated dar ince folositor: https://developer.mozilla.org/en-US/docs/WebAssembly/Understanding_the_text_format
+De notat: parametri si return-ul pot fi multipli si pot fi declarati in aceasi paranteza (param i32 i32)
+De notat: local=parametri+variabile locale in aceasta ordine. Pot fi redenumiti la $nume daca se doreste (param $x i32)
+De notat: tutorialul spune ca ai push si pop pe stiva automat, iar o operatie ia automat de pe stiva, nu are parametri, in fisierele primite nu avem asa, avem parametri pentru add, sub, etc
+Cred ca ar fi bine sa le luam pe rand si sa incercam sa facem interpretorul sa mearga "linie cu linie", adica sa vedem ce trebuie sa avem, de ex.: i32.add, i32.sub, etc. si apoi sa facem verificare la assert-uri
+Sugerez sa facem urmatoarea chestie pentru convenienta: code=code.replace('\t', ' ').replace('(', ' ( ').replace(')', ' ) '). Daca facem asta, termenii vor fi usor diferentiabili, daca nu, se poate si fara
