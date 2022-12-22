@@ -1,6 +1,32 @@
 Outdated dar ince folositor: https://developer.mozilla.org/en-US/docs/WebAssembly/Understanding_the_text_format
+Tutorial pentru interpretor in general: https://www.youtube.com/watch?v=8OYqvwQlJVI&list=PLGNbPb3dQJ_4WT_m3aI3T2LRf2R_FKM2k
 De notat: parametri si return-ul pot fi multipli si pot fi declarati in aceasi paranteza (param i32 i32)
 De notat: local=parametri+variabile locale in aceasta ordine. Pot fi redenumiti la $nume daca se doreste (param $x i32)
 De notat: tutorialul spune ca ai push si pop pe stiva automat, iar o operatie ia automat de pe stiva, nu are parametri, in fisierele primite nu avem asa, avem parametri pentru add, sub, etc
 Cred ca ar fi bine sa le luam pe rand si sa incercam sa facem interpretorul sa mearga "linie cu linie", adica sa vedem ce trebuie sa avem, de ex.: i32.add, i32.sub, etc. si apoi sa facem verificare la assert-uri
-Sugerez sa facem urmatoarea chestie pentru convenienta: code=code.replace('\t', ' ').replace('(', ' ( ').replace(')', ' ) '). Daca facem asta, termenii vor fi usor diferentiabili, daca nu, se poate si fara
+Sugerez o reformatare inainte de a rula codul, detalii in funtia reformat
+
+
+Pentru Giulian
+(module (funcAdd (param i32) (param i32) (result i32) (i32.add (local.get 0) (local.get 1))))
+(
+)
+module
+funcAdd
+param
+i32
+result
+i32.add
+local.get
+0 1 -> nr intregi baza 10
+0xFFFFFFFF -> nr intregi hexa
+
+(func (export "add") (param $x i32) (param $y i32) (result i32) (i32.add (local.get $x) (local.get $y)))
+func
+export
+"add" -> string
+$x $y -> aliasuri parametri/variabile locale
+
+(func (export "add") (param $x i32) (param $y i32) (result i32) (i32.add (local.get $x) (local.get $y)))
+declarare functie:
+(func (export "nume_fct") (param [alias ex: $x] i32))

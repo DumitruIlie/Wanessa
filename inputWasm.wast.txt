@@ -1,23 +1,2 @@
-(module (funcAdd (param i32) (param i32) (result i32) (i32.add (local.get 0) (local.get 1))))
-
-(
-)
-module
-funcAdd
-param
-i32
-result
-i32.add
-local.get
-0 1 -> nr intregi baza 10
-0xFFFFFFFF -> nr intregi hexa
-
-(func (export "add") (param $x i32) (param $y i32) (result i32) (i32.add (local.get $x) (local.get $y)))
-func
-export
-"add" -> string
-$x $y -> aliasuri parametri/variabile locale
-
-(func (export "add") (param $x i32) (param $y i32) (result i32) (i32.add (local.get $x) (local.get $y)))
-declarare functie:
-(func (export "nume_fct") (param [alias ex: $x] i32))
+;;comentariu
+(module (func (export "add") (param $x i32) (param $y i32) (result i32) (i32.add (local.get 0) (local.get 1))))

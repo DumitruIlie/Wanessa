@@ -1,5 +1,9 @@
 import interpretor as interp
+import tokenizer
 
 interpretedFileName=input("the file to interpret: ")
 interpretedFile=open(interpretedFileName)
-interp.interpret("".join(interpretedFile.readlines()))
+code=tokenizer.reformat(interpretedFile.readlines())
+interp.interpret(code)
+
+# de cautat Big number
