@@ -41,9 +41,9 @@ class wasmFunc:
 				while T[poz].tokType!='end':
 					if T[poz].tokType=='alias':
 						#variabila locala cu alias
-						self.params[T[poz].token]=len(self.paramTypes)+len(self.localTypes)
+						self.localVars[T[poz].token]=len(self.paramTypes)+len(self.localTypes)
 						poz+=1
-					self.paramTypes.append(T[poz].token)
+					self.localTypes.append(T[poz].token)
 					poz+=1
 				poz+=1
 			
