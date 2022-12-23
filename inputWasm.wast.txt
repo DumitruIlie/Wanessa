@@ -1,2 +1,34 @@
-;;comentariu
-(module (func (export "add") (param $x i32) (param $y i32) (result i32) (i32.add (local.get 0) (local.get 1))))
+;;comentariu0
+(module
+	(func (export "add") (param $x i32) (param $y i32) (result i32) (i32.add (local.get $x) (local.get $y)))
+	(func (export "sub") (param $x i32) (param $y i32) (result i32) (i32.sub (local.get $x) (local.get $y)))
+	(func (export "mul") (param $x i32) (param $y i32) (result i32) (i32.mul (local.get $x) (local.get $y)))
+	(func (export "div_s") (param $x i32) (param $y i32) (result i32) (i32.div_s (local.get $x) (local.get $y)))
+	(func (export "div_u") (param $x i32) (param $y i32) (result i32) (i32.div_u (local.get $x) (local.get $y)))
+	
+	(invoke "add" (i32.const 1) (i32.const 1))
+	(invoke "add" (i32.const 0) (i32.const 0))
+	(invoke "add" (i32.const 0xff) (i32.const 0xff))
+	(invoke "add" (i32.const -1) (i32.const -1))
+	(invoke "add" (i32.const 5) (i32.const -5))
+	(invoke "add" (i32.const 0) (i32.const 1))
+	
+	(invoke "sub" (i32.const 1) (i32.const 1))
+	(invoke "sub" (i32.const 0) (i32.const 0))
+	(invoke "sub" (i32.const 0xff) (i32.const 0xff))
+	(invoke "sub" (i32.const -1) (i32.const -1))
+	(invoke "sub" (i32.const 5) (i32.const -5))
+	(invoke "sub" (i32.const 0) (i32.const 1))
+	
+	(invoke "mul" (i32.const 1) (i32.const 1))
+	(invoke "mul" (i32.const 1) (i32.const 0))
+	(invoke "mul" (i32.const -1) (i32.const -1))
+	(invoke "mul" (i32.const 0x10000000) (i32.const 4096))
+	(invoke "mul" (i32.const 0x80000000) (i32.const 0))
+	(invoke "mul" (i32.const 0x80000000) (i32.const -1))
+	(invoke "mul" (i32.const 0x7fffffff) (i32.const -1))
+	(invoke "mul" (i32.const 0x01234567) (i32.const 0x76543210))
+	(invoke "mul" (i32.const 0x7fffffff) (i32.const 0x7fffffff))
+)
+;;comentariu1
+(invoke "add" (i32.const 2) (invoke "mul" (i32.const 5) (i32.const 8)))

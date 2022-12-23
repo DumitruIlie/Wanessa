@@ -4,8 +4,41 @@ def listaTipuriTokene():
 			")":"end",\
 			"i32.add":"keyword",\
 			"func":"keyword",\
+			"invoke":"keyword",\
 			"local.get":"keyword",\
+			"i32.const":"keyword",\
 			"param":"keyword",\
+			"i32.add":"keyword",\
+			"i32.sub":"keyword",\
+			"i32.mul":"keyword",\
+			"i32.div_s":"keyword",\
+			"i32.div_u":"keyword",\
+			"i32.rem_s":"keyword",\
+			"i32.rem_u":"keyword",\
+			"i32.and":"keyword",\
+			"i32.or":"keyword",\
+			"i32.xor":"keyword",\
+			"i32.shl":"keyword",\
+			"i32.shr_s":"keyword",\
+			"i32.shr_u":"keyword",\
+			"i32.rotl":"keyword",\
+			"i32.rotr":"keyword",\
+			"i32.clz":"keyword",\
+			"i32.ctz":"keyword",\
+			"i32.popcnt":"keyword",\
+			"i32.extend8_s":"keyword",\
+			"i32.extend16_s":"keyword",\
+			"i32.eqz":"keyword",\
+			"i32.eq":"keyword",\
+			"i32.ne":"keyword",\
+			"i32.lt_s":"keyword",\
+			"i32.lt_u":"keyword",\
+			"i32.le_s":"keyword",\
+			"i32.le_u":"keyword",\
+			"i32.gt_s":"keyword",\
+			"i32.gt_u":"keyword",\
+			"i32.ge_s":"keyword",\
+			"ge_u":"keyword",\
 			"module":"keyword"}
 
 #functie pentru ignorarea comentariilor si reformatarea codului original la anumite standarde
@@ -44,12 +77,13 @@ class Tokenizer:
 					tkType=tokenTypes.get(curr, "word")
 					
 					if tkType=="word":
-						#tipuri aditionale, mai greu de facut intr-un dictionar
+						#tipuri aditionale, generale care nu pot fi reprezentate intr-un dictionar
 						if curr[0]=='$':
 							tkType="alias"
-						elif '0'<=curr[0]<='9':
+						elif '0'<=curr[0]<='9' or curr[0]=='-':
 							tkType="number"
-						#de facut: string-uri si (poate) alte chestii daca mai apar
+						elif curr[0]=='\"':
+							tkType="string"
 					
 					self.tokens.append(Token(tkType, curr))
 					curr=[]
