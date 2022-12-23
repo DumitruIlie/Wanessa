@@ -73,6 +73,8 @@ class i32:
         ans.check_overflow()
         ans._val = ans._val & BITMASK_32
         return ans
+    def __str__(self):
+        return f"{self._val}"
 
 #Faci teste
 '''
