@@ -32,3 +32,8 @@
 )
 ;;comentariu1
 (invoke "add" (i32.const 2) (invoke "mul" (i32.const 5) (i32.const 8)))
+(call "add" (i32.const 2) (call "mul" (i32.const 5) (i32.const 8)))
+
+(assert_return (invoke "sub" (i32.const 2023) (i32.const 2022)) (i32.const 1))
+(assert_return 1 (i32.const 1))
+(assert_return (call "sub" (i32.const 2023) (i32.const 2022)) (i32.const 1))

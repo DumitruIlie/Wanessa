@@ -26,20 +26,30 @@ def wasmPop():
 	return wasmStack.pop()
 
 #numere in baza 10 si 16
-#va trebui modificat cand integram si i64
-def wasmEvalNumar(T, poz):
+def wasmEvalNumber(T, poz, returnType):
 	t=T[poz].token
 	if T[poz].tokType=="start":
 		poz=wasmEval(T, poz+1)
+		if isinstance(poz, tuple):
+			#a aparut o eroare undeva in cod
+			return poz
 		x=wasmPop()
-		return (x, poz)
+		if returnType is None or isinstance(x, returnType):
+			return (x, poz)
+		if isinstance(x, int) and (returnType==i32.i32): #or returnType==i64.i64):
+			return (returnType(x), poz)
+		#if (isinstance(x, float) or isinstance(x, int)) and returnType==f32.f32:
+		#	return (retType(x), poz)
+		return "type mismatch"
 	sign=1
 	if t[0]=='-':
 		sign=-1
 		t=t[1:]
 	if len(t)<3:
 		#baza 10 sigur
-		return (i32.i32(int(t)*sign), poz+1)
+		if returnType is None:
+			return (int(t)*sign, poz+1)
+		return (returnType(int(t)*sign), poz+1)
 	if t[1]=='x' or t[1]=='X':
 		#baza 16
 		x=0
@@ -52,22 +62,39 @@ def wasmEvalNumar(T, poz):
 				x=x*16+10+ord(t[i])-ord('A')
 			else:
 				return f"Number error, {T[poz].token} is not OK."
-		return (i32.i32(x*sign), poz+1)
-	return (i32.i32(int(t)*sign), poz+1)
+		if returnType is None:
+			return (x*sign, poz+1)
+		return (returnType(x*sign), poz+1)
+	if returnType is None:
+		return (int(t)*sign, poz+1)
+	return (returnType(int(t)*sign), poz+1)
 
 #functie pentru incarcarea parametrilor si "apel" functieWasm
 def wasmEvalFunc(T, poz, F):
 	variabileLocale.append([])
 	aliasVariabileLocale.append(F.params)
 	while len(variabileLocale[-1])<len(F.paramTypes):
-		x=wasmEvalNumar(T, poz)
+		retType=None
+		if F.paramTypes[len(variabileLocale[-1])]=="i32":
+			retType=i32.i32
+		elif F.paramTypes[len(variabileLocale[-1])]=="i64":
+			#retType=i64.i64
+			pass
+		elif F.paramTypes[len(variabileLocale[-1])]=="f32":
+			#retType=f32.f32
+			pass
+		x=wasmEvalNumber(T, poz, retType)
+		if isinstance(x[0], str):
+			return x
 		poz=x[1]
 		variabileLocale[-1].append(x[0])
 	#trebuie modificat aici cu tipurile de date din variabilele locale ale functiei
 	variabileLocale[-1].extend([i32.i32(0)]*len(F.localTypes))
-	wasmEval(F.tokens, 0)
+	x=wasmEval(F.tokens, 0)
 	aliasVariabileLocale.pop()
 	variabileLocale.pop()
+	if isinstance(x, tuple):
+		return x
 	return poz
 
 #keywords
@@ -83,7 +110,9 @@ def wasmEvalKeyword(T, poz):
 			poz+=1
 			wasmPush(variabileLocale[-1][x])
 		else:
-			x=wasmEvalNumar(T, poz)
+			x=wasmEvalNumber(T, poz, None)
+			if isinstance(x[0], str):
+				return x
 			poz=x[1]
 			wasmPush(variabileLocale[-1][x[0]])
 		return poz
@@ -95,7 +124,7 @@ def wasmEvalKeyword(T, poz):
 		functiiWasm[F.name]=F
 		return poz
 	
-	if t.token=="invoke":
+	if t.token=="invoke" or t.token=="call":
 		#apel functie
 		poz+=1
 		F=functiiWasm[T[poz].token.strip('\"')]
@@ -103,27 +132,43 @@ def wasmEvalKeyword(T, poz):
 		poz=wasmEvalFunc(T, poz, F)
 		return poz
 	
+	if t.token[:6]=="assert":
+		#assert-uri
+		#momentan nu sunt toate aici, incerc sa le fac pe toate dar dureaza
+		if t.token=="assert_return":
+			#calculam cele 2 rezultate si daca sunt diferite ne oprim
+			poz=wasmEval(T, poz+1)
+			if isinstance(poz, tuple):
+				return poz
+			poz=wasmEval(T, poz)
+			if isinstance(poz, tuple):
+				return poz
+			x=wasmPop()
+			y=wasmPop()
+			#cred ca va trebui sa modific cate ceva pe aici dar nu mai pot sa mai fac acum
+			if type(x)!=type(y):
+				return (f"Answers have different types, {type(x)}!={type(y)}", poz)
+			if x._val!=y._val:
+				return (f"Answers aren't the same, {x}!={y}", poz)
+			return poz
+	
 	if t.token=="i32.const":
 		#va trebui sa le adaugam si pe celelalte
-		x=wasmEvalNumar(T, poz+1)
-		poz=x[1]
-		#aici trebuie facut apel la un constructor de i32 dintr-un numar
-		y=x[0]#y=i32.i32(x[0])
-		wasmPush(y)
-		return poz
+		x=wasmEvalNumber(T, poz+1, i32.i32)
+		if isinstance(x[0], str):
+			return x
+		wasmPush(x[0])
+		return x[1]
 	
 	if t.token[:3]=="i32":
 		#o functie aplicata pe i32
-		#va trebui modificat astfel incat sa poata face toate functiile respective, pentru moment nu avem decat add deci folosim o implementare simpla
-		#x=wasmEvalNumar(T, poz+1)#x=i32.i32(wasmEvalNumar(T, poz+1))
-		#y=wasmEvalNumar(T, x[1])#y=i32.i32(wasmEvalNumar(T, x[1]))
-		#wasmPush(x[0]+y[0])#wasmPush(i32.i32.add(x[0]+y[0]))
-		#return y[1]
-		
-		#aici incerc o implementare generala, dar nu pot testa pana nu am clasa i32
-		X=wasmEvalNumar(T, poz+1)
+		X=wasmEvalNumber(T, poz+1, i32.i32)
+		if isinstance(X[0], str):
+			return X
 		if aritateFunctii[t.token]==2:
-			Y=wasmEvalNumar(T, X[1])
+			Y=wasmEvalNumber(T, X[1], i32.i32)
+			if isinstance(Y[0], str):
+				return Y
 			wasmPush(functiiBaza[t.token](X[0], Y[0]))
 			return Y[1]
 		wasmPush(functiiBaza[t.token](i32.i32(X[0])))
@@ -136,23 +181,29 @@ def wasmEval(T, poz):
 	while poz<len(T):
 		t=T[poz]
 		#pentru debug se poate decomenta urmatoarea linie
-		#print(f"Eval {T[poz]}")
+		print(f"Eval {T[poz]}")
 		
 		if t.tokType=="start":
 			poz=wasmEval(T, poz+1)
+			if isinstance(poz, tuple):
+				return poz
 			if poz==-1:
 				return -1
 		
 		elif t.tokType=="end":
 			return poz+1
 		
-		elif t.tokType=="number":
-			x=wasmEvalNumar(T, poz)
+		if t.tokType=="number":
+			x=wasmEvalNumber(T, poz, None)
+			if isinstance(x[0], str):
+				return x
 			poz=x[1]
 			wasmPush(x[0])
 		
 		elif t.tokType=="keyword":
 			poz=wasmEvalKeyword(T, poz)
+			if isinstance(poz, tuple):
+				return poz
 		
 		else:
 			poz+=1
@@ -161,10 +212,13 @@ def wasmEval(T, poz):
 #functia generala, se apeleaza o data pentru un text/cod sursa.
 def interpret(code):
 	initWasm()
-	T=tokenizer.Tokenizer(code, tokenizer.listaTipuriTokene())
+	T=tokenizer.Tokenizer(code)
 	poz=0
 	while poz<len(T.tokens):
 		poz=wasmEval(T.tokens, poz)
+		if isinstance(poz, tuple):
+			print(poz[0])
+			return None
 		if poz==-1:
 			break
 	print(*wasmStack, sep='\n')

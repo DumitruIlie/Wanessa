@@ -1,8 +1,12 @@
 import interpretor as interp
 import tokenizer
 
-interpretedFileName=input("the file to interpret: ")
-interpretedFile=open(interpretedFileName)
-code=tokenizer.reformat(interpretedFile.readlines())
+def main():
+	interpretedFileName=input("the file to interpret: ")
+	interpretedFile=open(interpretedFileName)
+	code=tokenizer.reformat(interpretedFile.readlines())
 
-interp.interpret(code)
+	interp.interpret(code)
+
+if __name__=="__main__":
+	main()
