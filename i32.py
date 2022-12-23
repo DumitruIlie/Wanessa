@@ -99,7 +99,7 @@ class i32:
             return ERROR_TYPE_MISMATCH
         ans = i32(t1._val | t2._val)
         return ans
-    def _and(t1,t2):
+    def _xor(t1,t2):
         if (isinstance(t1,i32) & isinstance(t2,i32)) != 1: 
             return ERROR_TYPE_MISMATCH
         ans = i32(t1._val ^ t2._val)
