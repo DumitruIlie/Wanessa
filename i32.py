@@ -73,6 +73,37 @@ class i32:
         ans.check_overflow()
         ans._val = ans._val & BITMASK_32
         return ans
+    def rem_s(t1, t2):
+        if (isinstance(t1,i32) & isinstance(t2,i32)) != 1: 
+            return ERROR_TYPE_MISMATCH
+        if (t2._val == 0):
+            return ERROR_TYPE_DIVIDEBY0
+        ans = i32(i32.div_s(t1,t2))
+        ans._val = i32.mul(i32.sub(t1,ans),t2)
+        return ans
+    def rem_u(t1,t2):
+        if (isinstance(t1,i32) & isinstance(t2,i32)) != 1: 
+            return ERROR_TYPE_MISMATCH
+        if (t2._val == 0):
+            return ERROR_TYPE_DIVIDEBY0
+        ans = i32(i32.div_u(t1,t2))
+        ans._val = i32.mul(i32.sub(t1,ans),t2)
+        return ans
+    def _and(t1,t2):
+        if (isinstance(t1,i32) & isinstance(t2,i32)) != 1: 
+            return ERROR_TYPE_MISMATCH
+        ans = i32(t1._val & t2._val)
+        return ans
+    def _or(t1,t2):
+        if (isinstance(t1,i32) & isinstance(t2,i32)) != 1: 
+            return ERROR_TYPE_MISMATCH
+        ans = i32(t1._val | t2._val)
+        return ans
+    def _and(t1,t2):
+        if (isinstance(t1,i32) & isinstance(t2,i32)) != 1: 
+            return ERROR_TYPE_MISMATCH
+        ans = i32(t1._val ^ t2._val)
+        return ans
     def __str__(self):
         return f"{self._val}"
 
