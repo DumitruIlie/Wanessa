@@ -1,10 +1,9 @@
 Simd cuvinte:
 
-
 (
 )
 
-words:
+keywords:
 
 module
 func
@@ -26,7 +25,7 @@ operatii pe vectori:
 i16x8.extadd_pairwise_i8x16_s
 i16x8.extadd_pairwise_i8x16_u
 
-operatii pe vectori doar ca apar si cu "":
+operatii pe vectori doar ca apar si cu "" pentru ca sunt folosite de functia invoke sau export:
 "i16x8.extadd_pairwise_i8x16_s"
 "i16x8.extadd_pairwise_i8x16_u"
 

@@ -1,0 +1,21 @@
+Simd tipare functii:
+
+(func (export "OPERATION") (param v128) (result v128) (OPERATION (local.get 0)))
+
+
+(assert_return (invoke "OPERATION" (v128.const i8x16 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0)) 
+                                                       (v128.const i16x8 0 0 0 0 0 0 0 0))
+Numerele de mai sus nu trebuie sa fie toate 0 ci doar sa fie numere intregi, si numarul lor este ori 16 ori 8 in functie de vectorul din fata.
+
+
+(assert_invalid (module (func (result v128) (OPERATION (i32.const 0)))) "type mismatch")
+
+
+(assert_invalid
+  (module
+    (func $OPERATION-arg-empty (result v128)
+      (OPERATION)
+    )
+  )
+  "type mismatch"
+)
