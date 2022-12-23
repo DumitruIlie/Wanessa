@@ -38,10 +38,10 @@ i64.const
 
 alias-uri:
 	cuvinte/functii:
-	$i
-	$j
-	$switch 
-	$default
+		$i
+		$j
+		$switch 
+		$default
 	constante: $0,$1,$2,$3,$4,$5,$6,$7
 
 numere intregi in baza 10: -10 -5 -3 -2 -1 0 1 2 3 4 5 6 7 8 10 12 20 100 101 102 110 118 126 1000 1116 1124 
