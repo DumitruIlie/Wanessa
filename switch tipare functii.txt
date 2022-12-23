@@ -1,0 +1,16 @@
+Switch tipare functii:
+
+la partea de inceput lucrurile sunt foarte specifice, nu prea am cum sa transmit un tipar general, deci uitati-va direct pe codul de la Rusu
+
+(assert_return (invoke "function" (i32.const 0)) (i32.const 0))
+
+function e din {stmt,arg}, constantele din nou nu sunt doar 0
+
+(assert_return (invoke "expr" (i64.const 0)) (i64.const 0))
+constantele din nou nu sunt doar 0, expr e singura fucntie din acest tipar
+
+(assert_return (invoke "corner") (i32.const 1))
+singura functie de genul acesta
+
+(assert_invalid (module (func (br_table 3 (i32.const 0)))) "unknown label")
+singura functie de genul acesta
