@@ -2,6 +2,7 @@ def listaTipuriTokene():
 	return {"i32":"data type",\
 			"(":"start",\
 			")":"end",\
+			"drop":"keyword",\
 			"func":"keyword",\
 			"param":"keyword",\
 			"export":"keyword",\
@@ -119,7 +120,6 @@ class Tokenizer:
 					curr.append(text[i])
 					i+=1
 				tkType="string"
-				print(curr, sep=' ')
 				self.tokens.append(Token(tkType, "".join(curr)))
 				curr=[]
 			

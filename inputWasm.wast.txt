@@ -34,6 +34,49 @@
 (invoke "add" (i32.const 2) (invoke "mul" (i32.const 5) (i32.const 8)))
 (call "add" (i32.const 2) (call "mul" (i32.const 5) (i32.const 8)))
 
+(module
+	(1)
+	(i32.const 1)
+)
+
 (assert_return (invoke "sub" (i32.const 2023) (i32.const 2022)) (i32.const 1))
-(assert_return 1 (i32.const 1))
+(assert_invalid (module (i32.add 1 (i32.const 1))) "type mismatch")
 (assert_return (call "sub" (i32.const 2023) (i32.const 2022)) (i32.const 1))
+
+;;(module
+;;  (func (export "multi") (param i32) (result i32 i32)
+;;    (if (result i32) (local.get 0)
+;;      (then (i32.const 8))
+;;      (else (i32.const 9))
+;;    )
+	;;echivalent cu a spune:
+	;;acest if are un singur rezultat, un i32
+	;;daca variabila 0 atunci acest rezultat este (i32.const 8)
+	;;altfel acest rezultat este (i32.const 9)
+    
+;;	(if (result i32 i64 i32) (local.get 0)
+;;      (then
+;;          (i32.const 1) 
+;;          (i64.const 2) 
+;;          (i32.const 3) 
+;;      )
+;;      (else
+;;          (i32.const -1) 
+;;          (i64.const -2) 
+;;          (i32.const -3) 
+;;      )
+;;    )
+    ;;echivalent cu a spune:
+	;;acest if are 3 rezultate, un i32, un i64 si un i32
+	;;daca variabila 0 atunci aceste rezultate sunt (i32.const 1) (i64.const 2) si (i32.const 3)
+	;;altfel aceste rezultate sunt (i32.const -1) (i64.const -2) si (i32.const -3)
+	
+	;;(drop) (drop)
+	;;din cele 2 if-uri obtinem pe stiva 4 valori, dar noi retunam doar 2, deci eliminam ultimele 2 valori de pe stiva, pentru ca nu sunt importante
+  ;;)
+
+;;(assert_return (invoke "multi" (i32.const 0)) (i32.const 9) (i32.const -1))
+;;(assert_return (invoke "multi" (i32.const 1)) (i32.const 8) (i32.const 1))
+;;(assert_return (invoke "multi" (i32.const 13)) (i32.const 8) (i32.const 1))
+;;(assert_return (invoke "multi" (i32.const -5)) (i32.const 8) (i32.const 1))
+;;)

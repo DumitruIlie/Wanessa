@@ -26,7 +26,7 @@ def wasmPop():
 	return wasmStack.pop()
 
 #numere in baza 10 si 16
-def wasmEvalNumber(T, poz, returnType):
+def wasmEvalNumber(T, poz):
 	t=T[poz].token
 	if T[poz].tokType=="start":
 		poz=wasmEval(T, poz+1)
@@ -34,22 +34,21 @@ def wasmEvalNumber(T, poz, returnType):
 			#a aparut o eroare undeva in cod
 			return poz
 		x=wasmPop()
-		if returnType is None or isinstance(x, returnType):
-			return (x, poz)
-		if isinstance(x, int) and (returnType==i32.i32): #or returnType==i64.i64):
-			return (returnType(x), poz)
-		#if (isinstance(x, float) or isinstance(x, int)) and returnType==f32.f32:
-		#	return (retType(x), poz)
-		return "type mismatch"
+		return (x, poz)
+	if T[poz].tokType=="end":
+		#ia din stiva
+		x=wasmPop()
+		if isinstance(x, str):
+			#eroare, nu avem nimic in stiva
+			return (x, poz+1)
+		return (x, poz+1)
 	sign=1
 	if t[0]=='-':
 		sign=-1
 		t=t[1:]
 	if len(t)<3:
 		#baza 10 sigur
-		if returnType is None:
-			return (int(t)*sign, poz+1)
-		return (returnType(int(t)*sign), poz+1)
+		return (int(t)*sign, poz+1)
 	if t[1]=='x' or t[1]=='X':
 		#baza 16
 		x=0
@@ -62,19 +61,29 @@ def wasmEvalNumber(T, poz, returnType):
 				x=x*16+10+ord(t[i])-ord('A')
 			else:
 				return f"Number error, {T[poz].token} is not OK."
-		if returnType is None:
-			return (x*sign, poz+1)
-		return (returnType(x*sign), poz+1)
-	if returnType is None:
-		return (int(t)*sign, poz+1)
-	return (returnType(int(t)*sign), poz+1)
+		return (x*sign, poz+1)
+	return (int(t)*sign, poz+1)
+
+#functie "citire" string
+def wasmEvalString(T, poz):
+	if T[poz].tokType=="start":
+		x=wasmEvalString(T, poz+1)
+		if len(x)==3:
+			#eroare
+			return x
+		#string
+		return x
+	if T[poz].tokType=="string":
+		return (T[poz].token, poz+1)
+	#altceva, eroare
+	return (-1, f"expected string found {T[poz].token}", poz)
 
 #functie pentru incarcarea parametrilor si "apel" functieWasm
 def wasmEvalFunc(T, poz, F):
 	variabileLocale.append([])
 	aliasVariabileLocale.append(F.params)
 	while len(variabileLocale[-1])<len(F.paramTypes):
-		retType=None
+		retType=int
 		if F.paramTypes[len(variabileLocale[-1])]=="i32":
 			retType=i32.i32
 		elif F.paramTypes[len(variabileLocale[-1])]=="i64":
@@ -83,9 +92,13 @@ def wasmEvalFunc(T, poz, F):
 		elif F.paramTypes[len(variabileLocale[-1])]=="f32":
 			#retType=f32.f32
 			pass
-		x=wasmEvalNumber(T, poz, retType)
+		x=wasmEvalNumber(T, poz)
 		if isinstance(x[0], str):
+			#eroare
 			return x
+		if not isinstance(x[0], retType):
+			#eroare TYPE_MISMATCH
+			return ("type mismatch", x[1])
 		poz=x[1]
 		variabileLocale[-1].append(x[0])
 	#trebuie modificat aici cu tipurile de date din variabilele locale ale functiei
@@ -97,11 +110,72 @@ def wasmEvalFunc(T, poz, F):
 		return x
 	return poz
 
+def wasmEvalAssert(T, poz):
+	#assert-uri
+	#momentan nu sunt toate aici, incerc sa le fac pe toate dar dureaza
+	if T[poz].token=="assert_return":
+		#calculam cele 2 rezultate si daca sunt diferite ne oprim
+		poz=wasmEval(T, poz+1)
+		if isinstance(poz, tuple):
+			return poz
+		poz=wasmEval(T, poz)
+		if isinstance(poz, tuple):
+			return poz
+		x=wasmPop()
+		y=wasmPop()
+		#cred ca va trebui sa modific cate ceva pe aici dar nu mai pot sa mai fac acum
+		if type(x)!=type(y):
+			return ("type mismatch", poz)
+		if x._val!=y._val:
+			return ("AssertFail", poz)
+		return poz
+	
+	if T[poz].token=="assert_invalid":
+		#ne asteptam la o eroare, daca eroarea primita este cea la care ne asteptam, continuam executia, altfel ne oprim
+		#dupa assert_invalid urmeaza un modul si dupa asta un string indicand eroarea ce ar trebui returnata
+		if poz+1>=len(T):
+			return (f"unexpected end of file", poz)
+		poz+=1
+		if T[poz].tokType!="start":
+			return (f"expected '(' found {T[poz].token}", poz+1)
+		if poz+1>=len(T):
+			return (f"unexpected end of file", poz)
+		poz+=1
+		if T[poz].token!="module":
+			return (f"expected \'module\' found {T[poz].token}", poz+1)
+		cntPrnt=1
+		i=poz
+		while cntPrnt and i<len(T):
+			cntPrnt+=int(T[i].tokType=="start")-int(T[i].tokType=="end")
+			i+=1
+		poz+=1
+		x=wasmEval(T, poz)
+		if not isinstance(x, tuple):
+			#nu a aparut vreo eroare, deci assert-ul pica
+			print(x, " ", wasmStack[-1])
+			return ("AssertFail", x)
+		#a aparut o eroare, verific daca e cea dorita
+		y=wasmEvalString(T, i)
+		if len(y)==3:
+			#eroare
+			return (y[1], y[2])
+		#string-ul s-a citit corespunzator
+		if y[0].strip('\"')!=x[0]:
+			#erorile asteptata si primita sunt diferite, assert-ul pica
+			return ("AssertFail", y[1])
+		#assert-ul merge perfect
+		return y[1]
+
 #keywords
 def wasmEvalKeyword(T, poz):
 	global variabileLocale
 	t=T[poz]
 	#verific care tip de keyword este ca sa stiu cum sa continui
+	if t.token=="drop":
+		#scoate de pe stiva si nu returneaza
+		wasmPop()
+		return poz+1
+	
 	if t.token=="local.get":
 		#alias sau numar
 		poz+=1
@@ -110,7 +184,7 @@ def wasmEvalKeyword(T, poz):
 			poz+=1
 			wasmPush(variabileLocale[-1][x])
 		else:
-			x=wasmEvalNumber(T, poz, None)
+			x=wasmEvalNumber(T, poz)
 			if isinstance(x[0], str):
 				return x
 			poz=x[1]
@@ -133,43 +207,38 @@ def wasmEvalKeyword(T, poz):
 		return poz
 	
 	if t.token[:6]=="assert":
-		#assert-uri
-		#momentan nu sunt toate aici, incerc sa le fac pe toate dar dureaza
-		if t.token=="assert_return":
-			#calculam cele 2 rezultate si daca sunt diferite ne oprim
-			poz=wasmEval(T, poz+1)
-			if isinstance(poz, tuple):
-				return poz
-			poz=wasmEval(T, poz)
-			if isinstance(poz, tuple):
-				return poz
-			x=wasmPop()
-			y=wasmPop()
-			#cred ca va trebui sa modific cate ceva pe aici dar nu mai pot sa mai fac acum
-			if type(x)!=type(y):
-				return (f"Answers have different types, {type(x)}!={type(y)}", poz)
-			if x._val!=y._val:
-				return (f"Answers aren't the same, {x}!={y}", poz)
+		poz=wasmEvalAssert(T, poz)
+		if isinstance(poz, tuple):
+			#AssertFail
 			return poz
+		#AssertPass
+		return poz
 	
 	if t.token=="i32.const":
 		#va trebui sa le adaugam si pe celelalte
-		x=wasmEvalNumber(T, poz+1, i32.i32)
+		x=wasmEvalNumber(T, poz+1)
 		if isinstance(x[0], str):
 			return x
+		if not isinstance(x[0], i32.i32):
+			if not isinstance(x[0], int):
+				return ("type mismatch", x[1])
+			x=(i32.i32(x[0]), x[1])
 		wasmPush(x[0])
 		return x[1]
 	
 	if t.token[:3]=="i32":
 		#o functie aplicata pe i32
-		X=wasmEvalNumber(T, poz+1, i32.i32)
+		X=wasmEvalNumber(T, poz+1)
 		if isinstance(X[0], str):
 			return X
 		if aritateFunctii[t.token]==2:
-			Y=wasmEvalNumber(T, X[1], i32.i32)
+			Y=wasmEvalNumber(T, X[1])
 			if isinstance(Y[0], str):
 				return Y
-			wasmPush(functiiBaza[t.token](X[0], Y[0]))
+			ans=functiiBaza[t.token](X[0], Y[0])
+			if ans=="TYPE MISMATCH":
+				return ("type mismatch", Y[1])
+			wasmPush(ans)
 			return Y[1]
 		wasmPush(functiiBaza[t.token](i32.i32(X[0])))
 		return X[1]
@@ -194,7 +263,7 @@ def wasmEval(T, poz):
 			return poz+1
 		
 		if t.tokType=="number":
-			x=wasmEvalNumber(T, poz, None)
+			x=wasmEvalNumber(T, poz)
 			if isinstance(x[0], str):
 				return x
 			poz=x[1]
