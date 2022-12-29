@@ -12,7 +12,6 @@ i64 tipare functii:
 (assert_return (invoke "name" (i64.const 0)) (i64.const 0))
 -format specific pentru functiile din a doua categorie de la func, numerele pot fi in baza 10 sau in baza 16 si de alea cu _ care nuj exact ce sunt,si da sunt si combinate la unele apeluri
 
-
 (assert_trap (invoke "div_s" (i64.const 0x8000000000000000) (i64.const -1)) "integer overflow")
 -apare doar la div_s
 
