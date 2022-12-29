@@ -90,10 +90,6 @@ alias-uri:
 	$x
 	$y   
 
-	functii cu alias specifice assert_invalid:
-
-	constante: $0,$1,$2,$3,$4,$5,$6,$7
-
 numere intregi in baza 10: -1 -2 1 2 0
 numere in baza 16(probabil intregi): -0x8000 0x7fffffffffffffff 0x8000000000000000 0x3fffffff 0x99999999AAAAAAAA
 nu stiu ce fel de numere sunt astea: 0x01234567_89abcd_00 0xfedcba98_765432_80 0x12345678_9abc_0000
