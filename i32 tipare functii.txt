@@ -10,7 +10,7 @@ i32 tipare functii:
 -format specific la majoritatea functiilor(cred ca fix la functiile care intra in prima categorie la func), numerele pot fi in baza 10 sau in baza 16,si da sunt si combinate la unele apeluri
 
 (assert_return (invoke "name" (i32.const 0xfedc_8000)) (i32.const 0))
--format specific pentru functiile din a doua categorie de la func, numerele pot fi in baza 10 sau in baza 16,si da sunt si combinate la unele apeluri
+-format specific pentru functiile din a doua categorie de la func, numerele pot fi in baza 10 sau in baza 16 si de alea cu _ care nuj exact ce sunt,si da sunt si combinate la unele apeluri
 
 
 (assert_trap (invoke "div_s" (i32.const 0x80000000) (i32.const -1)) "integer overflow")

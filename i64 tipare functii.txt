@@ -1,0 +1,35 @@
+i64 tipare functii:
+
+(func (export "name") (param $x i64) (param $y i64) (result i64) (i64.name (local.get $x) (local.get $y)))
+-format specific la majoritatea functiilor
+
+(func (export "name") (param $x i64) (result i64) (i64.name (local.get $x)))
+-format specific pentru functiile clz, ctz, popcnt, extend8_s, extend16_s, extend32_s, eqz
+
+(assert_return (invoke "name" (i64.const 0x8000000000000000) (i64.const 0x8000000000000000)) (i32.const 1))
+-format specific la majoritatea functiilor(cred ca fix la functiile care intra in prima categorie la func), numerele pot fi in baza 10 sau in baza 16,si da sunt si combinate la unele apeluri
+
+(assert_return (invoke "name" (i64.const 0)) (i64.const 0))
+-format specific pentru functiile din a doua categorie de la func, numerele pot fi in baza 10 sau in baza 16 si de alea cu _ care nuj exact ce sunt,si da sunt si combinate la unele apeluri
+
+(assert_trap (invoke "div_s" (i64.const 0x8000000000000000) (i64.const -1)) "integer overflow")
+-apare doar la div_s
+
+(assert_trap (invoke "name" (i64.const 0x8000000000000000) (i64.const 0)) "integer divide by zero")
+-apare doar la div_s,div_u,rem_s,rem_u
+
+(assert_invalid (module (func (result i64) (i64.name (i32.const 0) (f32.const 0)))) "type mismatch")
+-format specific pentru functiile din prima categorie
+
+(assert_invalid (module (func (result i64) (i64.eqz (i32.const 0)))) "type mismatch")
+-format specific pentru functiile eqz,clz,ctz,popcnt
+
+(assert_malformed
+  (module quote "(func (result i64) (i64.const nan:arithmetic))")
+  "unexpected token"
+)
+(assert_malformed
+  (module quote "(func (result i64) (i64.const nan:canonical))")
+  "unexpected token"
+)
+-singurele 2 functii de acest tip

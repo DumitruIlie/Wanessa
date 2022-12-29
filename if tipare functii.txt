@@ -1,0 +1,3 @@
+if tipare functii:
+
+functiile de aici sunt destul de ciudatele si specifice, in afara de niste tiparuri de assert-ur nu prea am cum sa le categorizez, asa ca le puteti lua direct de acolo cand le implementati, daca e totusi problema stau eu si le fac

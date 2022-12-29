@@ -1,0 +1,118 @@
+i64 cuvinte:
+
+(
+)
+"(mai apare pentru ca dupa el urma o paranteza)
+
+keywords:
+module
+func
+export
+param
+result
+i32
+i64
+
+functii apelate:
+"add"
+"sub"
+"mul"
+"div_s"
+"div_u"
+"rem_s"
+"rem_u"
+"and"
+"or"
+"xor"
+"shl"
+"shr_s"
+"shr_u"
+"rotl"
+"rotr"
+"clz"
+"ctz"
+"popcnt"
+"extend8_s"
+"extend16_s"
+"extend32_s"
+"eqz"
+"eq"
+"ne"
+"lt_s"
+"lt_u"
+"le_s"
+"le_u"
+"gt_s"
+"gt_u"
+"ge_s"
+"ge_u"
+i64.add
+i64.sub
+i64.mul
+i64.div_s
+i64.div_u
+i64.rem_s
+i64.rem_u
+i64.and
+i64.or
+i64.xor
+i64.shl
+i64.shr_s
+i64.shr_u
+i64.rotl
+i64.rotr
+i64.clz
+i64.ctz
+i64.popcnt
+i64.extend8_s
+i64.extend16_s
+i64.extend32_s
+i64.eqz
+i64.eq
+i64.ne
+i64.lt_s
+i64.lt_u
+i64.le_s
+i64.le_u
+i64.gt_s
+i64.gt_u
+i64.ge_s
+i64.ge_u
+local.get
+
+constante:
+i32.const
+i64.const
+f32.const(folosit doar in assert_invalid)
+
+alias-uri:
+	cuvinte/functii:
+	$x
+	$y   
+
+numere intregi in baza 10: -1 -2 1 2 0
+numere in baza 16(probabil intregi): -0x8000 0x7fffffffffffffff 0x8000000000000000 0x3fffffff 0x99999999AAAAAAAA
+nu stiu ce fel de numere sunt astea: 0x01234567_89abcd_00 0xfedcba98_765432_80 0x12345678_9abc_0000
+
+assert-uri:
+assert_return
+assert_invalid
+assert_trap 
+assert_malformed
+
+specific assert_return:
+invoke
+
+specific assert_invalid:
+"type mismatch"
+
+specific assert_trap:
+invoke
+"integer overflow"
+"integer divide by zero"
+
+specific assert_malformed:
+quote
+"unexpected token"
+nan:arithmetic
+nan:canonical
