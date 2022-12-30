@@ -45,31 +45,39 @@ def listaTipuriTokene():
 			"i32.gt_u":"keyword",\
 			"i32.ge_s":"keyword",\
 			"i32.ge_u":"keyword",\
+			"nop":"keyword",\
 			"module":"keyword"}
 
 #functie pentru ignorarea comentariilor si reformatarea codului original la anumite standarde
 def reformat(code):
 	#exista posibilitatea ca un comentariu sa fie scris intre ghilimele ceea ce il face sa nu mai fie un comentariu, asa ca trebuie sa fim atenti cu ele
 	#comentariile par a incepe cu ;; si a se termina la sfarsitul liniei
+	#pentru a face treaba mai usoara, modificam codul pentru a avea un spatiu inainte si dupa caracterele '(' si ')'.
+	#si aici pot aparea probleme din cauza ghilimelelor
 	for i in range(len(code)):
 		j=0
 		string=0
+		aux=[]
 		while j<len(code[i]):
 			if code[i][j]=='\"':
 				string=1-string
+				aux.append(code[i][j])
 			elif code[i][j]=='\\' and j+1<len(code[i]) and code[i][j+1]=='\"':
+				aux.append(code[i][j])
+				aux.append(code[i][j+1])
 				j+=1
 			elif code[i][j]==';' and j+1<len(code[i]) and code[i][j+1]==';' and string==0:
-				code[i]=code[i][:j]
 				break
+			elif code[i][j]=='(' and string==0:
+				aux.append(' ( ')
+			elif code[i][j]==')' and string==0:
+				aux.append(' ) ')
+			else:
+				aux.append(code[i][j])
 			j+=1
-		if len(code[i])==0:
-			code[i]=""
-	#pana aici sterg comentariile
+		code[i]="".join(aux)
 	#alipesc tot codul intr-un singur string, dar vreau sa stim in continuare faptul ca acolo se separa codul, iar pentru asta facem join cu un caracter spatiu
 	code=" ".join(code)
-	#pentru a face treaba mai usoara, modificam codul pentru a avea un spatiu inainte si dupa caracterele '(' si ')'.
-	code=code.replace('(', ' ( ').replace(')', ' ) ')
 	return code
 
 #class Token, retine tipul de token si string-ul reprezentand 
@@ -81,6 +89,19 @@ class Token:
 	def __str__(self):
 		return f"{{{self.tokType}, {self.token}}}"
 
+#functie, primeste un string returneaza un Token ce reprezinta tipul stringului si stringul in sine
+def getToken(s):
+	tkType=listaTipuriTokene().get(s, "word")
+	if tkType=="word":
+		#tipuri aditionale, generale care nu pot fi reprezentate intr-un dictionar
+		if s[0]=='$':
+			tkType="alias"
+		elif '0'<=s[0]<='9' or s[0]=='-':
+			tkType="number"
+		elif s[0]=='\"':
+			tkType="string"
+	return Token(tkType, s)
+
 class Tokenizer:
 	def __init__(self, text):
 		tokenTypes=listaTipuriTokene()
@@ -91,19 +112,7 @@ class Tokenizer:
 		while i<len(text):
 			if text[i]==' ' or text[i]=='\t' or text[i]=='\n':
 				if curr!=[]:
-					curr="".join(curr)
-					tkType=tokenTypes.get(curr, "word")
-					
-					if tkType=="word":
-						#tipuri aditionale, generale care nu pot fi reprezentate intr-un dictionar
-						if curr[0]=='$':
-							tkType="alias"
-						elif '0'<=curr[0]<='9' or curr[0]=='-':
-							tkType="number"
-						elif curr[0]=='\"':
-							tkType="string"
-					
-					self.tokens.append(Token(tkType, curr))
+					self.tokens.append(getToken("".join(curr)))
 					curr=[]
 			elif text[i]=='\"':
 				#string

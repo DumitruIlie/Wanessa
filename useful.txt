@@ -30,3 +30,162 @@ $x $y -> aliasuri parametri/variabile locale
 (func (export "add") (param $x i32) (param $y i32) (result i32) (i32.add (local.get $x) (local.get $y)))
 declarare functie:
 (func (export "nume_fct") (param [alias ex: $x] i32))
+
+(func (export "add") (param $x i32) (param $y i32) (result i32) (i32.add (local.get $x) (local.get $y)))
+(
+	func;
+	(
+		export;
+		"add";
+	);
+	(
+		param;
+		$x;
+		i32;
+	);
+	(
+		param;
+		$y;
+		i32;
+	);
+	(
+		result;
+		i32;
+	);
+	(
+		i32.add;
+		(
+			local.get;
+			&x;
+		);
+		(
+			local.get;
+			&y;
+		);
+	);
+)
+
+(
+	func;
+	(
+		export;
+		"nume";
+	);
+	(
+		param;
+		[alias];
+		tip;
+		[alias];
+		tip;
+		[alias];
+		tip;
+		...
+		[alias];
+		tip;
+	);
+	(
+		result;
+		tip;
+		tip;
+		tip;
+		...
+		tip;
+	);
+	(
+		local;
+		[alias];
+		tip;
+		[alias];
+		tip;
+		[alias];
+		tip;
+		...
+		[alias];
+		tip;
+	);
+	(
+		instr;
+		instr;
+		instr;
+		...
+		instr;
+		numar;
+		numar;
+		numar;
+		...
+		numar;
+	)
+)
+
+;;urmatorul AST este ok pentru ca avem instructiunea adunare urmata de 2 AST-uri ce reprezinta numere
+;;similar recursiv
+(
+	i32.add;
+	(
+		i32.add;
+		(
+			i32.add;
+			(
+				i32.const;
+				number;
+			);
+			(
+				i32.const;
+				number;
+			);
+		);
+		(
+			i32.const;
+			number;
+		);
+	);
+	(
+		i32.add;
+		(
+			i32.const;
+			number;
+		);
+		(
+			i32.const;
+			number;
+		);
+	);
+)
+
+
+O sa incerc sa definesc gramatica pentru wasm.
+S -> INSTRN
+INSTRN ->INSTR INSTRN | INSTR
+
+INSTR -> ( INSTR ) | ( FUNC_DEF ) | ( FUNC_CALL ) | ( IF_ELSE_INSTR ) | ( SWITCH_INSTR ) | ( CONSTANTA ) | ( OPERATIE SIMPLA ) | < nimic >
+
+FUNC_DEF -> ( func ALIAS FUNC_DEF_PRM ) | ( func (export "STRING") FUNC_DEF_PRM ) | ( func FUNC_DEF_PRM )
+FUNC_DEF_PRM -> (param LISTA_PARAMETRII) FUNC_DEF_RET | FUNC_DEF_RET
+FUNC_DEF_RET -> (result LISTA_RETURN) FUNC_DEF_LOC | FUNC_DEF_LOC
+FUNC_DEF_LOC -> (local LISTA_LOCALE) ( INSTRN ) | ( INSTRN )
+
+ALIAS -> $STRING
+LISTA_PARAMETRII -> TIP_DATA LISTA_PARAMETRII | TIP_DATA ALIAS LISTA_PARAMETRII | TIP_DATA | TIP_DATA ALIAS
+LISTA_RETURN -> TIP_DATA LISTA_RETURN | TIP_DATA
+LISTA_LOCALE -> TIP_DATA LISTA_LOCALE | TIP_DATA ALIAS LISTA_LOCALE | TIP_DATA | TIP_DATA ALIAS
+
+STRING -> aSTRING | a | bSTRING | b | cSTRING | c | dSTRING | d | eSTRING | e | fSTRING | f | gSTRING | g | hSTRING | h | iSTRING | i | jSTRING | j | kSTRING | k | lSTRING | l | mSTRING | m | nSTRING | n | oSTRING | o | pSTRING | p | qSTRING | q | rSTRING | r | sSTRING | s | tSTRING | t | uSTRING | u | vSTRING | v | wSTRING | w | xSTRING | x | ySTRING | y | zSTRING | z
+TIP_DATA -> i32 | i64 | f32 | f64 | i16x8 | i8x16
+
+FUNC_CALL -> ( invoke "STRING" ) | ( invoke "STRING" LISTA_VARIABILE ) | ( call ALIAS ) | ( call ALIAS LISTA_VARIABILE )
+LISTA_VARIABILE -> VARIABILA LISTA_VARIABILE | VARIABILA
+VARIABILA -> local.get ALIAS | local.get NUMAR | ( INSTR )
+NUMAR -> NUMAR_10 | NUMAR_16
+NUMAR_10 -> 0 | 1NUMAR_0_10 | 1 | 2NUMAR_0_10 | 2 | 3NUMAR_0_10 | 3 | 4NUMAR_0_10 | 4 | 5NUMAR_0_10 | 5 | 6NUMAR_0_10 | 6 | 7NUMAR_0_10 | 7 | 8NUMAR_0_10 | 8 | 9NUMAR_0_10 | 9
+NUMAR_0_10 -> 0NUMAR_0_10 | 0 | 1NUMAR_0_10 | 1 | 2NUMAR_0_10 | 2 | 3NUMAR_0_10 | 3 | 4NUMAR_0_10 | 4 | 5NUMAR_0_10 | 5 | 6NUMAR_0_10 | 6 | 7NUMAR_0_10 | 7 | 8NUMAR_0_10 | 8 | 9NUMAR_0_10 | 9
+NUMAR_16 -> 0xNUMAR_0_16
+NUMAR_0_16 -> 0NUMAR_0_16 | 0 | 1NUMAR_0_16 | 1 | 2NUMAR_0_16 | 2 | 3NUMAR_0_16 | 3 | 4NUMAR_0_16 | 4 | 5NUMAR_0_16 | 5 | 6NUMAR_0_16 | 6 | 7NUMAR_0_16 | 7 | 8NUMAR_0_16 | 8 | 9NUMAR_0_16 | 9 | ANUMAR_0_16 | aNUMAR_0_16 | a | A | BNUMAR_0_16 | bNUMAR_0_16 | b | B | CNUMAR_0_16 | cNUMAR_0_16 | c | C | DNUMAR_0_16 | dNUMAR_0_16 | d | D | ENUMAR_0_16 | eNUMAR_0_16 | e | E | FNUMAR_0_16 | fNUMAR_0_16 | f | F
+
+IF_ELSE_INSTR -> 
+
+
+
+
+
+
+
