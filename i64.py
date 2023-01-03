@@ -206,11 +206,11 @@ class i64:
     def le_s(t1,t2):
         if (isinstance(t1,i64) & isinstance(t2,i64)) !=1:
             return ERROR_TYPE_MISMATCH
-        return i64._or(i64.eq(t1,t2)._val,i64.lt_s(t1,t2)._val)
+        return i64._or(i64.eq(t1,t2),i64.lt_s(t1,t2))
     def le_u(t1,t2):
         if (isinstance(t1,i64) & isinstance(t2,i64)) !=1:
             return ERROR_TYPE_MISMATCH
-        return i64._or(i64.eq(t1,t2)._val,i64.lt_u(t1,t2)._val)
+        return i64._or(i64.eq(t1,t2),i64.lt_u(t1,t2))
     def gt_s(t1,t2):
         if (isinstance(t1,i64) & isinstance(t2,i64)) !=1:
             return ERROR_TYPE_MISMATCH
@@ -228,11 +228,11 @@ class i64:
     def ge_s(t1,t2):
         if (isinstance(t1,i64) & isinstance(t2,i64)) !=1:
             return ERROR_TYPE_MISMATCH
-        return i64._or(i64.eq(t1,t2)._val,i64.gt_s(t1,t2)._val)
+        return i64._or(i64.eq(t1,t2),i64.gt_s(t1,t2))
     def ge_u(t1,t2):
         if (isinstance(t1,i64) & isinstance(t2,i64)) !=1:
             return ERROR_TYPE_MISMATCH
-        return i64._or(i64.eq(t1,t2)._val,i64.gt_u(t1,t2)._val)
+        return i64._or(i64.eq(t1,t2),i64.gt_u(t1,t2))
     def __str__(self):
         return f"{self._val}"
 
