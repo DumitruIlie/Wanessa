@@ -46,6 +46,38 @@ def listaTipuriTokene():
 			"i32.gt_u":"keyword",\
 			"i32.ge_s":"keyword",\
 			"i32.ge_u":"keyword",\
+			"i64.const":"keyword",\
+			"i64.add":"keyword",\
+			"i64.sub":"keyword",\
+			"i64.mul":"keyword",\
+			"i64.div_s":"keyword",\
+			"i64.div_u":"keyword",\
+			"i64.rem_s":"keyword",\
+			"i64.rem_u":"keyword",\
+			"i64.and":"keyword",\
+			"i64.or":"keyword",\
+			"i64.xor":"keyword",\
+			"i64.shl":"keyword",\
+			"i64.shr_s":"keyword",\
+			"i64.shr_u":"keyword",\
+			"i64.rotl":"keyword",\
+			"i64.rotr":"keyword",\
+			"i64.clz":"keyword",\
+			"i64.ctz":"keyword",\
+			"i64.popcnt":"keyword",\
+			"i64.extend8_s":"keyword",\
+			"i64.extend16_s":"keyword",\
+			"i64.eqz":"keyword",\
+			"i64.eq":"keyword",\
+			"i64.ne":"keyword",\
+			"i64.lt_s":"keyword",\
+			"i64.lt_u":"keyword",\
+			"i64.le_s":"keyword",\
+			"i64.le_u":"keyword",\
+			"i64.gt_s":"keyword",\
+			"i64.gt_u":"keyword",\
+			"i64.ge_s":"keyword",\
+			"i64.ge_u":"keyword",\
 			"nop":"keyword",\
 			"module":"keyword",\
 			#ASTA TREBUIE SCOS INAINTE SA TRIMITEM PROIECTUL
