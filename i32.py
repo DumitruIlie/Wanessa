@@ -138,30 +138,33 @@ class i32:
             return ERROR_TYPE_MISMATCH
         ans = i32(int(f"{t1._val:032b}"[-t2._val:] + f"{t1._val:032b}"[:-t2._val], 2))
         return ans
-    def clz(t1,t2):
-        if (isinstance(t1,i32) & isinstance(t2,i32)) !=1:
+    def clz(t1):
+        if isinstance(t1,i32) !=1:
             return ERROR_TYPE_MISMATCH
         base = 1 << 31
-        t2._val = 0
+        ans = i32(0)
         while(base & t1._val == 0 and base>=1):
-            t2._val += 1
+            ans._val += 1
             base = base >> 1
-    def ctz(t1,t2):
-        if (isinstance(t1,i32) & isinstance(t2,i32)) !=1:
+        return ans
+    def ctz(t1):
+        if isinstance(t1,i32) !=1:
             return ERROR_TYPE_MISMATCH
         base = 1
-        t2._val = 0
+        ans = i32(0)
         while(base & t1._val == 0  and base<=(1<<31)):
-            t2._val += 1
+            ans._val += 1
             base = base << 1
-    def popcnt(t1, t2):
-        if (isinstance(t1,i32) & isinstance(t2,i32)) !=1:
+        return ans
+    def popcnt(t1):
+        if isinstance(t1,i32) !=1:
             return ERROR_TYPE_MISMATCH
         base = 1
-        t2._val = 0
+        ans = i32(0)
         while base<=(1<<31):
-            if t1._val & base: t2._val+=1
+            if t1._val & base: ans._val+=1
             base = base << 1
+        return ans
     def extend8_s(t1):
         ans = i32(int.from_bytes(t1._val.to_bytes(1, 'little', signed=True), 'little', signed=True))
         return ans
@@ -200,11 +203,11 @@ class i32:
     def le_s(t1,t2):
         if (isinstance(t1,i32) & isinstance(t2,i32)) !=1:
             return ERROR_TYPE_MISMATCH
-        return i32(i32._or(i32.eq(t1,t2),i32.lt_s(t1,t2)))
+        return i32._or(i32.eq(t1,t2)._val,i32.lt_s(t1,t2)._val)
     def le_u(t1,t2):
         if (isinstance(t1,i32) & isinstance(t2,i32)) !=1:
             return ERROR_TYPE_MISMATCH
-        return i32(i32._or(i32.eq(t1,t2),i32.lt_u(t1,t2)))
+        return i32._or(i32.eq(t1,t2)._val,i32.lt_u(t1,t2)._val)
     def gt_s(t1,t2):
         if (isinstance(t1,i32) & isinstance(t2,i32)) !=1:
             return ERROR_TYPE_MISMATCH
@@ -222,11 +225,11 @@ class i32:
     def ge_s(t1,t2):
         if (isinstance(t1,i32) & isinstance(t2,i32)) !=1:
             return ERROR_TYPE_MISMATCH
-        return i32(i32._or(i32.eq(t1,t2),i32.gt_s(t1,t2)))
+        return i32._or(i32.eq(t1,t2)._val,i32.gt_s(t1,t2)._val)
     def ge_u(t1,t2):
         if (isinstance(t1,i32) & isinstance(t2,i32)) !=1:
             return ERROR_TYPE_MISMATCH
-        return i32(i32._or(i32.eq(t1,t2),i32.gt_u(t1,t2)))
+        return i32._or(i32.eq(t1,t2)._val,i32.gt_u(t1,t2)._val)
     def __str__(self):
         return f"{self._val}"
 
