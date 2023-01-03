@@ -1,6 +1,5 @@
 import tokenizer
 import wasmFunc
-import exception
 import AST
 import i32
 import i64
