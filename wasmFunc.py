@@ -84,6 +84,7 @@ class wasmFunc:
 				#sfarsit corp functie
 				self.params=dict()
 				self.localVars=dict()
+				self.tokens.append(T[poz])
 				self.AST=AST.makeAST(self.tokens)
 				self.tokens=[]
 				return ""

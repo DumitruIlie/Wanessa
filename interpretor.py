@@ -55,7 +55,11 @@ def wasmASTEvalNumber(ast):
 	if ast.children[wasmPozEval[-1]].tokType=="keyword":
 		wasmASTEvalKeyword(ast)
 		return wasmPop()
-	return wasmTokenToNumber(ast.children[wasmPozEval[-1]])
+	if ast.children[wasmPozEval[-1]].tokType=="number":
+		if ast.children[wasmPozEval[-1]].token=="unknown operator":
+			return ast.children[wasmPozEval[-1]].token
+		return wasmTokenToNumber(ast.children[wasmPozEval[-1]])
+	return "unknown operator"
 
 #transforma un token intr-un numar (int)
 def wasmTokenToNumber(t):
@@ -86,20 +90,28 @@ def wasmASTCallFunc(ast, F):
 	#wasmStack.append([])
 	locVar=[]
 	
-	while len(variabileLocale[-1])<len(F.paramTypes):
+	while len(locVar)<len(F.paramTypes):
 		retType=int
-		if F.paramTypes[len(variabileLocale[-1])]=="i32":
+		if F.paramTypes[len(locVar)]=="i32":
 			retType=i32.i32
-		elif F.paramTypes[len(variabileLocale[-1])]=="i64":
+		elif F.paramTypes[len(locVar)]=="i64":
 			retType=i64.i64
-		elif F.paramTypes[len(variabileLocale[-1])]=="f32":
+		elif F.paramTypes[len(locVar)]=="f32":
 			#retType=f32.f32
 			pass
 		
-		wasmPozEval.append(0)
-		x=wasmASTEvalNumber(ast.children[wasmPozEval[-2]])
-		wasmPozEval.pop()
-		wasmPozEval[-1]+=1
+		if isinstance(ast.children[wasmPozEval[-1]], AST.AST):
+			wasmPozEval.append(0)
+			x=wasmASTEvalNumber(ast.children[wasmPozEval[-2]])
+			wasmPozEval.pop()
+			wasmPozEval[-1]+=1
+			if isinstance(x, str):
+				#trebuie modificat pe aici
+				########################################################################################################################################
+				return x
+		else:
+			wasmASTEvalKeyword(ast)
+			x=wasmPop()
 		if not isinstance(x, retType):
 			return "type mismatch"
 		locVar.append(x)
@@ -114,10 +126,10 @@ def wasmASTCallFunc(ast, F):
 		wasmASTEval(F.AST)
 		wasmPozEval.pop()
 	
-	if len(F.results)!=len(wasmStack[-1]):
-		l=len(wasmStack.pop())
+	if len(F.results)!=(l:=len(wasmStack[-1])):
+		wasmStack.pop()
 		return f"function is expected to return {len(F.results)} values but only returns {l}"
-	for i in range(len(F.results)):
+	for i in range(l):
 		if tipuriDate[F.results[i]]!=type(wasmStack[-1][i]):
 			x=wasmStack.pop()[i]
 			return f"function is expected to return {F.results[i]} but returns {type(x)}"
@@ -125,6 +137,7 @@ def wasmASTCallFunc(ast, F):
 	variabileLocale.pop()
 	x=wasmStack.pop()
 	wasmStack[-1].extend(x)
+	return ""
 
 #verifica un assert
 def wasmASTEvalAssert(ast):
@@ -156,10 +169,10 @@ def wasmASTEvalAssert(ast):
 		y=wasmStack.pop()
 		x=wasmStack.pop()
 		if len(x)!=len(y):
-			return "assert fail"
+			return f"assert fail because expected {len(y)} values but only got {len(x)} values"
 		for i in range(len(x)):
 			if type(x[i])!=type(y[i]) or x[i]._val!=y[i]._val:
-				return "assert fail"
+				return f"assert fail because {i}-th values differ ({type(x[i])}, {x[i]._val}) != ({type(y[i])}, {y[i]._val})"
 		return "ok"
 	
 	if ast.children[wasmPozEval[-1]].token=="assert_invalid":
@@ -181,7 +194,6 @@ def wasmASTEvalAssert(ast):
 
 #keywords
 def wasmASTEvalKeyword(ast):
-	global variabileLocale
 	t=ast.children[wasmPozEval[-1]]
 	wasmPozEval[-1]+=1
 	
@@ -231,8 +243,11 @@ def wasmASTEvalKeyword(ast):
 		return ans
 	
 	if t.token[:6]=="assert":
+		wasmPozEval[-1]-=1
 		assertAns=wasmASTEvalAssert(ast)
-		return assertAns
+		if assertAns!="ok":
+			return assertAns
+		return ""
 	
 	if t.token=="i32.const":
 		#va trebui sa le adaugam si pe celelalte
@@ -240,9 +255,14 @@ def wasmASTEvalKeyword(ast):
 		wasmPozEval[-1]+=1
 		return ""
 	
+	if t.token=="i64.const":
+		wasmPush(i64.i64(wasmTokenToNumber(ast.children[wasmPozEval[-1]])))
+		wasmPozEval[-1]+=1
+		return ""
+	
 	#va trebui sa adaugam si celelalte tipuri de date
-	if t.token[:3]=="i32":
-		#o functie aplicata pe i32
+	if t.token[:3]=="i32" or t.token[:3]=="i64":
+		#o functie aplicata pe i32 sau i64
 		if isinstance(ast.children[wasmPozEval[-1]], AST.AST):
 			wasmPozEval.append(0)
 			x=wasmASTEvalNumber(ast.children[wasmPozEval[-2]])
@@ -275,7 +295,7 @@ def wasmASTEvalKeyword(ast):
 			return "type mismatch"
 		wasmPush(ans)
 		return ""
-	
+		
 	#ASTA TREBUIE SCOS INAINTE SA TRIMITEM PROIECTUL
 	if t.token=="print":
 		wasmLogStack()
@@ -287,7 +307,7 @@ def wasmASTEval(ast):
 	while wasmPozEval[-1]<len(ast.children):
 		t=ast.children[wasmPozEval[-1]]
 		#pentru debug se poate decomenta urmatoarea linie
-		#print(f"Eval {t}")
+		print(f"Eval {t}")
 		
 		if isinstance(t, tokenizer.Token):
 			if t.tokType=="number":
@@ -314,6 +334,7 @@ def wasmASTEval(ast):
 			wasmPozEval[-1]+=1
 			if ans!="":
 				return ans
+	return ""
 
 #functia generala, se apeleaza o data pentru un text/cod sursa.
 def interpret(code):
