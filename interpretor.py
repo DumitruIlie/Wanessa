@@ -306,7 +306,7 @@ def wasmASTEval(ast):
 	while wasmPozEval[-1]<len(ast.children):
 		t=ast.children[wasmPozEval[-1]]
 		#pentru debug se poate decomenta urmatoarea linie
-		print(f"Eval {t}")
+		#print(f"Eval {t}")
 		
 		if isinstance(t, tokenizer.Token):
 			if t.tokType=="number":

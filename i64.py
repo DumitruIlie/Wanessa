@@ -138,33 +138,30 @@ class i64:
             return ERROR_TYPE_MISMATCH
         ans = i64(int(f"{t1._val:064b}"[-t2._val:] + f"{t1._val:064b}"[:-t2._val], 2))
         return ans
-    def clz(t1):
-        if isinstance(t1,i64) !=1:
+    def clz(t1,t2):
+        if (isinstance(t1,i64) & isinstance(t2,i64)) !=1:
             return ERROR_TYPE_MISMATCH
         base = 1 << 63
-        ans = i64(0)
+        t2._val = 0
         while(base & t1._val == 0 and base>=1):
-            ans._val += 1
+            t2._val += 1
             base = base >> 1
-        return ans
-    def ctz(t1):
-        if isinstance(t1,i64) !=1:
+    def ctz(t1,t2):
+        if (isinstance(t1,i64) & isinstance(t2,i64)) !=1:
             return ERROR_TYPE_MISMATCH
         base = 1
-        ans = i64(0)
+        t2._val = 0
         while(base & t1._val == 0  and base<=(1<<63)):
-            ans._val += 1
+            t2._val += 1
             base = base << 1
-        return ans
-    def popcnt(t1):
-        if isinstance(t1,i64) !=1:
+    def popcnt(t1, t2):
+        if (isinstance(t1,i64) & isinstance(t2,i64)) !=1:
             return ERROR_TYPE_MISMATCH
         base = 1
-        ans = i64(0)
+        t2._val = 0
         while base<=(1<<63):
-            if t1._val & base: ans._val+=1
+            if t1._val & base: t2._val+=1
             base = base << 1
-        return ans
     def extend8_s(t1):
         ans = i64(int.from_bytes(t1._val.to_bytes(1, 'little', signed=True), 'little', signed=True))
         return ans
@@ -206,11 +203,11 @@ class i64:
     def le_s(t1,t2):
         if (isinstance(t1,i64) & isinstance(t2,i64)) !=1:
             return ERROR_TYPE_MISMATCH
-        return i64._or(i64.eq(t1,t2),i64.lt_s(t1,t2))
+        return i64(i64._or(i64.eq(t1,t2),i64.lt_s(t1,t2)))
     def le_u(t1,t2):
         if (isinstance(t1,i64) & isinstance(t2,i64)) !=1:
             return ERROR_TYPE_MISMATCH
-        return i64._or(i64.eq(t1,t2),i64.lt_u(t1,t2))
+        return i64(i64._or(i64.eq(t1,t2),i64.lt_u(t1,t2)))
     def gt_s(t1,t2):
         if (isinstance(t1,i64) & isinstance(t2,i64)) !=1:
             return ERROR_TYPE_MISMATCH
@@ -228,17 +225,10 @@ class i64:
     def ge_s(t1,t2):
         if (isinstance(t1,i64) & isinstance(t2,i64)) !=1:
             return ERROR_TYPE_MISMATCH
-        return i64._or(i64.eq(t1,t2),i64.gt_s(t1,t2))
+        return i64(i64._or(i64.eq(t1,t2),i64.gt_s(t1,t2)))
     def ge_u(t1,t2):
         if (isinstance(t1,i64) & isinstance(t2,i64)) !=1:
             return ERROR_TYPE_MISMATCH
-        return i64._or(i64.eq(t1,t2),i64.gt_u(t1,t2))
+        return i64(i64._or(i64.eq(t1,t2),i64.gt_u(t1,t2)))
     def __str__(self):
         return f"{self._val}"
-
-#Faci teste
-
-a = i64(-1)
-b = i64(0)
-c = i64.lt_u(b,a)
-print(c)
