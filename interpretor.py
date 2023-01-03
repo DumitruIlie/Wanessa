@@ -3,21 +3,36 @@ import wasmFunc
 import exception
 import AST
 import i32
+import i64
+
 wasmStack=[]
 variabileLocale=[]
 functiiWasm=dict()
+wasmPozEval=[]
 aritateFunctii={"i32.add":2, "i32.sub":2, "i32.mul":2, "i32.div_s":2, "i32.div_u":2, "i32.rem_s":2, "i32.rem_u":2, "i32.and":2, "i32.or":2, "i32.xor":2, "i32.shl":2, "i32.shr_s":2, "i32.shr_u":2, "i32.rotl":2, "i32.rotr":2,\
-				"i32.clz":1, "i32.ctz":1, "i32.popcnt":1, "i32.extend8_s":1, "i32.extend16_s":1, "i32.eqz":1, "i32.eq":2, "i32.ne":2, "i32.lt_s":2, "i32.lt_u":2, "i32.le_s":2, "i32.le_u":2, "i32.gt_s":2, "i32.gt_u":2, "i32.ge_s":2, "ge_u":2}
-functiiBaza={"i32.add":i32.i32.add, "i32.sub":i32.i32.sub, "i32.mul":i32.i32.mul, "i32.div_s":i32.i32.div_s, "i32.div_u":i32.i32.div_u, "i32.rem_s":i32.i32.rem_s, "i32.rem_u":i32.i32.rem_u, "i32.and":i32.i32._and, "i32.or":i32.i32._or, "i32.xor":i32.i32._xor}#, "i32.shl":i32.i32.shl, "i32.shr_s":i32.i32.shr_s, "i32.shr_u":i32.i32.shr_u, "i32.rotl":i32.i32.rotl, "i32.rotr":i32.i32.rotr,\
-#				"i32.clz":i32.i32.clz, "i32.ctz":i32.i32.ctz, "i32.popcnt":i32.i32.popcnt, "i32.extend8_s":i32.i32.extend8_s, "i32.extend16_s":i32.i32.extend16_s, "i32.eqz":i32.i32.eqz, "i32.eq":i32.i32.eq, "i32.ne":i32.i32.ne, "i32.lt_s":i32.i32.lt_s, "i32.lt_u":i32.i32.lt_u, "i32.le_s":i32.i32.le_s, "i32.le_u":i32.i32.le_u, "i32.gt_s":i32.i32.gt_s, "i32.gt_u":i32.i32.gt_u, "i32.ge_s":i32.i32.ge_s, "ge_u":i32.i32.ge_u}
-tipuriDate={"i32":i32.i32}#, "i64":i64.i64, "f32":f32.f32}
+				"i32.clz":1, "i32.ctz":1, "i32.popcnt":1, "i32.extend8_s":1, "i32.extend16_s":1, "i32.eqz":1, "i32.eq":2, "i32.ne":2, "i32.lt_s":2, "i32.lt_u":2, "i32.le_s":2, "i32.le_u":2, "i32.gt_s":2, "i32.gt_u":2, "i32.ge_s":2, "i32.ge_u":2,\
+				"i64.add":2, "i64.sub":2, "i64.mul":2, "i64.div_s":2, "i64.div_u":2, "i64.rem_s":2, "i64.rem_u":2, "i64.and":2, "i64.or":2, "i64.xor":2, "i64.shl":2, "i64.shr_s":2, "i64.shr_u":2, "i64.rotl":2, "i64.rotr":2,\
+				"i64.clz":1, "i64.ctz":1, "i64.popcnt":1, "i64.extend8_s":1, "i64.extend16_s":1, "i64.eqz":1, "i64.eq":2, "i64.ne":2, "i64.lt_s":2, "i64.lt_u":2, "i64.le_s":2, "i64.le_u":2, "i64.gt_s":2, "i64.gt_u":2, "i64.ge_s":2, "i64.ge_u":2}
+functiiBaza={"i32.add":i32.i32.add, "i32.sub":i32.i32.sub, "i32.mul":i32.i32.mul, "i32.div_s":i32.i32.div_s, "i32.div_u":i32.i32.div_u, "i32.rem_s":i32.i32.rem_s, "i32.rem_u":i32.i32.rem_u, "i32.and":i32.i32._and, "i32.or":i32.i32._or, "i32.xor":i32.i32._xor, "i32.shl":i32.i32.shl, "i32.shr_s":i32.i32.shr_s, "i32.shr_u":i32.i32.shr_u, "i32.rotl":i32.i32.rotl, "i32.rotr":i32.i32.rotr,\
+			 "i32.clz":i32.i32.clz, "i32.ctz":i32.i32.ctz, "i32.popcnt":i32.i32.popcnt, "i32.extend8_s":i32.i32.extend8_s, "i32.extend16_s":i32.i32.extend16_s, "i32.eqz":i32.i32.eqz, "i32.eq":i32.i32.eq, "i32.ne":i32.i32.ne, "i32.lt_s":i32.i32.lt_s, "i32.lt_u":i32.i32.lt_u, "i32.le_s":i32.i32.le_s, "i32.le_u":i32.i32.le_u, "i32.gt_s":i32.i32.gt_s, "i32.gt_u":i32.i32.gt_u, "i32.ge_s":i32.i32.ge_s, "i32.ge_u":i32.i32.ge_u,\
+			 "i64.add":i64.i64.add, "i64.sub":i64.i64.sub, "i64.mul":i64.i64.mul, "i64.div_s":i64.i64.div_s, "i64.div_u":i64.i64.div_u, "i64.rem_s":i64.i64.rem_s, "i64.rem_u":i64.i64.rem_u, "i64.and":i64.i64._and, "i64.or":i64.i64._or, "i64.xor":i64.i64._xor, "i64.shl":i64.i64.shl, "i64.shr_s":i64.i64.shr_s, "i64.shr_u":i64.i64.shr_u, "i64.rotl":i64.i64.rotl, "i64.rotr":i64.i64.rotr,\
+			 "i64.clz":i64.i64.clz, "i64.ctz":i64.i64.ctz, "i64.popcnt":i64.i64.popcnt, "i64.extend8_s":i64.i64.extend8_s, "i64.extend16_s":i64.i64.extend16_s, "i64.eqz":i64.i64.eqz, "i64.eq":i64.i64.eq, "i64.ne":i64.i64.ne, "i64.lt_s":i64.i64.lt_s, "i64.lt_u":i64.i64.lt_u, "i64.le_s":i64.i64.le_s, "i64.le_u":i64.i64.le_u, "i64.gt_s":i64.i64.gt_s, "i64.gt_u":i64.i64.gt_u, "i64.ge_s":i64.i64.ge_s, "i64.ge_u":i64.i64.ge_u}
+tipuriDate={"i32":i32.i32, "i64":i64.i64}#, "f32":f32.f32}
 
-#initializeaza stiva programului
+#initializeaza interpretorul
 def initWasm():
-	global wasmStack, veriabileLocale, functiiWasm
+	global wasmStack, veriabileLocale, functiiWasm, wasmPozEval
 	wasmStack=[[]]
 	variabileLocale=[]
 	functiiWasm=dict()
+	wasmPozEval=[0]
+
+#functie de test, ajuta la debug, TREBUIE NEAPARAT STEARSA INAINTE SA TRIMITEM PROIECTUL
+def wasmLogStack():
+	print('[')
+	for i in range(len(wasmStack)):
+		print('[', *wasmStack[i], ']')
+	print(']')
 
 #adauga pe stiva un element
 def wasmPush(x):
@@ -29,55 +44,23 @@ def wasmPop():
 
 #numere in baza 10 si 16
 def wasmASTEvalNumber(ast):
-	t=T[poz].token
-	if isinstance(ast.children[0], AST):
-		wasmASTEval(ast.children[0])
+	if isinstance(ast.children[wasmPozEval[-1]], AST.AST):
+		wasmPozEval.append(0)
+		wasmASTEval(ast.children[wasmPozEval[-2]])
+		wasmPozEval.pop()
+		wasmPozEval[-1]+=1
 		return wasmPop()
-	if AST is None:
+	if ast is None:
 		return wasmPop()
-	sign=1
-	t=AST[0].token
-	if t[0]=='-':
-		sign=-1
-		t=t[1:]
-	if len(t)<3:
-		#baza 10 sigur
-		return int(t)*sign
-	if t[1]=='x' or t[1]=='X':
-		#baza 16
-		x=0
-		for i in range(2, len(t)):
-			if '0'<=t[i]<='9':
-				x=x*16+ord(t[i])-ord('0')
-			elif 'a'<=t[i]<='f':
-				x=x*16+10+ord(t[i])-ord('a')
-			elif 'A'<=t[i]<='F':
-				x=x*16+10+ord(t[i])-ord('A')
-			else:
-				if sign<0:
-					t='-'+t
-				raise exception.NumberException(t+" is not a valid number.")
-		return x*sign
-	return int(t)*sign
+	if ast.children[wasmPozEval[-1]].tokType=="keyword":
+		wasmASTEvalKeyword(ast)
+		return wasmPop()
+	return wasmTokenToNumber(ast.children[wasmPozEval[-1]])
 
-#numere in baza 10 si 16
-def wasmEvalNumber(T, poz):
-	t=T[poz].token
-	if T[poz].tokType=="start":
-		poz=wasmEval(T, poz+1)
-		if isinstance(poz, tuple):
-			#a aparut o eroare undeva in cod
-			return poz
-		x=wasmPop()
-		return (x, poz)
-	if T[poz].tokType=="end":
-		#ia din stiva
-		x=wasmPop()
-		if isinstance(x, str):
-			#eroare, nu avem nimic in stiva
-			return (x, poz+1)
-		return (x, poz+1)
+#transforma un token intr-un numar (int)
+def wasmTokenToNumber(t):
 	sign=1
+	t=t.token.replace('_', '')
 	if t[0]=='-':
 		sign=-1
 		t=t[1:]
@@ -85,8 +68,8 @@ def wasmEvalNumber(T, poz):
 		t=t[1:]
 	if len(t)<3:
 		#baza 10 sigur
-		return (int(t)*sign, poz+1)
-	if t[1]=='x' or t[1]=='X':
+		return int(t)*sign
+	if t[1]=='x':
 		#baza 16
 		x=0
 		for i in range(2, len(t)):
@@ -94,409 +77,243 @@ def wasmEvalNumber(T, poz):
 				x=x*16+ord(t[i])-ord('0')
 			elif 'a'<=t[i]<='f':
 				x=x*16+10+ord(t[i])-ord('a')
-			elif 'A'<=t[i]<='F':
-				x=x*16+10+ord(t[i])-ord('A')
-			else:
-				return f"Number error, {T[poz].token} is not OK."
-		return (x*sign, poz+1)
-	return (int(t)*sign, poz+1)
-
-#functie "citire" string
-def wasmEvalString(T, poz):
-	if T[poz].tokType=="start":
-		x=wasmEvalString(T, poz+1)
-		if len(x)==3:
-			#eroare
-			return x
-		#string
-		return x
-	if T[poz].tokType=="string":
-		return (T[poz].token, poz+1)
-	#altceva, eroare
-	return (-1, f"expected string found {T[poz].token}", poz)
-
-#functie "citire" string
-def wasmASTEvalString(ast):
-	if isinstance(ast.children[0], tokenizer.Token):
-		return ast.children[0].token
-	if isinstance(ast.children[0], AST.AST):
-		return wasmASTEvalString(ast.children[0])
-	raise exception.StringException(str(ast.children)+" is not a valid string.")
+		return x*sign
+	return int(t)*sign
 
 #functie pentru incarcat parametri si variabile locale + apel la functie
 def wasmASTCallFunc(ast, F):
-	variabileLocale.append([])
-	wasmStack.append([])
+	#variabileLocale.append([])
+	#wasmStack.append([])
+	locVar=[]
+	
 	while len(variabileLocale[-1])<len(F.paramTypes):
 		retType=int
 		if F.paramTypes[len(variabileLocale[-1])]=="i32":
 			retType=i32.i32
 		elif F.paramTypes[len(variabileLocale[-1])]=="i64":
-			#retType=i64.i64
-			pass
+			retType=i64.i64
 		elif F.paramTypes[len(variabileLocale[-1])]=="f32":
 			#retType=f32.f32
 			pass
-		if len(F.paramTypes)<len(ast.children):
-			try:
-				x=wasmASTEvalNumber()
-			except Exception as e:
-				raise e
-			if not isinstance(x, retType):
-				#eroare TYPE_MISMATCH
-				raise exception.TypeMismatchException(f"Expected type {retType} but found {type(x)}: {x}")
-			variabileLocale[-1].append(x)
+		
+		wasmPozEval.append(0)
+		x=wasmASTEvalNumber(ast.children[wasmPozEval[-2]])
+		wasmPozEval.pop()
+		wasmPozEval[-1]+=1
+		if not isinstance(x, retType):
+			return "type mismatch"
+		locVar.append(x)
+	
+	variabileLocale.append(locVar)
 	for x in F.localTypes:
 		variabileLocale[-1].append(tipuriDate[x](0))
-	try:
+	
+	if isinstance(F.AST, AST.AST):
+		wasmStack.append([])
+		wasmPozEval.append(0)
 		wasmASTEval(F.AST)
-	except Exception as e:
-		raise e
-	variabileLocale.pop()
+		wasmPozEval.pop()
+	
 	if len(F.results)!=len(wasmStack[-1]):
-		raise exception.LogicException(f"Function returns different number of results than expected; results={F.results}, returned={wasmStack[-1]}")
+		l=len(wasmStack.pop())
+		return f"function is expected to return {len(F.results)} values but only returns {l}"
 	for i in range(len(F.results)):
 		if tipuriDate[F.results[i]]!=type(wasmStack[-1][i]):
-			raise exception.LogicException(f"The function result with index {i} had different type ({type(wasmStack[-1][i])}) than expected ({tipuriDate[F.results[i]]})")
-	if len(F.results)==1:
-		return wasmStack.pop()[0]
-	return wasmStack.pop()
-
-#functie pentru incarcarea parametrilor si "apel" functieWasm
-def wasmEvalFunc(T, poz, F):
-	variabileLocale.append([])
-	aliasVariabileLocale.append(F.params)
-	while len(variabileLocale[-1])<len(F.paramTypes):
-		retType=int
-		if F.paramTypes[len(variabileLocale[-1])]=="i32":
-			retType=i32.i32
-		elif F.paramTypes[len(variabileLocale[-1])]=="i64":
-			#retType=i64.i64
-			pass
-		elif F.paramTypes[len(variabileLocale[-1])]=="f32":
-			#retType=f32.f32
-			pass
-		x=wasmEvalNumber(T, poz)
-		if isinstance(x[0], str):
-			#eroare
-			return x
-		if not isinstance(x[0], retType):
-			#eroare TYPE_MISMATCH
-			return ("type mismatch", x[1])
-		poz=x[1]
-		variabileLocale[-1].append(x[0])
-	#trebuie modificat aici cu tipurile de date din variabilele locale ale functiei
-	variabileLocale[-1].extend([i32.i32(0)]*len(F.localTypes))
-	x=wasmEval(F.tokens, 0)
-	aliasVariabileLocale.pop()
+			x=wasmStack.pop()[i]
+			return f"function is expected to return {F.results[i]} but returns {type(x)}"
+	
 	variabileLocale.pop()
-	if isinstance(x, tuple):
-		return x
-	return poz
+	x=wasmStack.pop()
+	wasmStack[-1].extend(x)
 
+#verifica un assert
 def wasmASTEvalAssert(ast):
-	#assert-uri
 	#momentan nu sunt toate aici, incerc sa le fac pe toate dar dureaza
-	if ast.children[0].token=="assert_return":
+	if ast.children[wasmPozEval[-1]].token=="assert_return":
+		wasmPozEval[-1]+=1
 		#calculam cele 2 rezultate si daca sunt diferite ne oprim
-		if isinstance(ast.children[1], AST.AST):
+		if isinstance(ast.children[wasmPozEval[-1]], AST.AST):
 			wasmStack.append([])
-			wasmASTEval(ast.children[1])
-			x=wasmStack.pop()
+			wasmPozEval.append(0)
+			x=wasmASTEval(ast.children[wasmPozEval[-2]])
+			wasmPozEval.pop()
+			wasmPozEval[-1]+=1
+			if x!="":
+				return "assert fail because of "+x
 		else:
-			raise exception.FormatException(f"Expected brace enclosed expresion after assert_return but found {ast.children[1]}")
-		if isinstance(ast.children[2], AST.AST):
-			wasmASTEval(ast.children[2])
-		else:
-			raise exception.FormatException(f"Expected brace enclosed expresion after assert_return but found {ast.children[2]}")
-		y=wasmPop()
-		#cred ca va trebui sa modific cate ceva pe aici dar nu mai pot sa mai fac acum
-		if type(x)!=type(y):
-			raise AssertException("")
-		if x._val!=y._val:
-			return ("AssertFail", poz)
-		return poz
+			return f"assert fail"
+		wasmStack.append([])
+		for i in range(wasmPozEval[-1], len(ast.children)):
+			if isinstance(ast.children[i], AST.AST):
+				wasmPozEval.append(0)
+				x=wasmASTEval(ast.children[i])
+				wasmPozEval.pop()
+				if x!="":
+					return "assert fail because of "+x
+			else:
+				return "assert fail"
+		wasmPozEval[-1]=len(ast.children)
+		y=wasmStack.pop()
+		x=wasmStack.pop()
+		if len(x)!=len(y):
+			return "assert fail"
+		for i in range(len(x)):
+			if type(x[i])!=type(y[i]) or x[i]._val!=y[i]._val:
+				return "assert fail"
+		return "ok"
 	
-	if T[poz].token=="assert_invalid":
-		#ne asteptam la o eroare, daca eroarea primita este cea la care ne asteptam, continuam executia, altfel ne oprim
-		#dupa assert_invalid urmeaza un modul si dupa asta un string indicand eroarea ce ar trebui returnata
-		if poz+1>=len(T):
-			return (f"unexpected end of file", poz)
-		poz+=1
-		if T[poz].tokType!="start":
-			return (f"expected '(' found {T[poz].token}", poz+1)
-		if poz+1>=len(T):
-			return (f"unexpected end of file", poz)
-		poz+=1
-		if T[poz].token!="module":
-			return (f"expected \'module\' found {T[poz].token}", poz+1)
-		cntPrnt=1
-		i=poz
-		while cntPrnt and i<len(T):
-			cntPrnt+=int(T[i].tokType=="start")-int(T[i].tokType=="end")
-			i+=1
-		poz+=1
-		x=wasmEval(T, poz)
-		if not isinstance(x, tuple):
-			#nu a aparut vreo eroare, deci assert-ul pica
-			print(x, " ", wasmStack[-1])
-			return ("AssertFail", x)
-		#a aparut o eroare, verific daca e cea dorita
-		y=wasmEvalString(T, i)
-		if len(y)==3:
-			#eroare
-			return (y[1], y[2])
-		#string-ul s-a citit corespunzator
-		if y[0].strip('\"')!=x[0]:
+	if ast.children[wasmPozEval[-1]].token=="assert_invalid":
+		wasmPozEval[-1]+=1
+		#ne asteptam la o eroare, daca eroarea primita este cea la care ne asteptam, assert-ul trece, altfel pica
+		#dupa assert_invalid urmeaza un modulul ce trebuie sa dea eroare si dupa un string indicand eroarea ce ar trebui ridicata
+		if not isinstance(ast.children[wasmPozEval[-1]], AST.AST):
+			return "assert fail"
+		wasmPozEval.append(0)
+		eroare=wasmASTEval(ast.children[wasmPozEval[-2]])
+		wasmPozEval.pop()
+		wasmPozEval[-1]+=1
+		y=ast.children[wasmPozEval[-1]].token
+		if y!=eroare:
 			#erorile asteptata si primita sunt diferite, assert-ul pica
-			return ("AssertFail", y[1])
+			return "assert fail"
 		#assert-ul merge perfect
-		return y[1]
-
-def wasmEvalAssert(T, poz):
-	#assert-uri
-	#momentan nu sunt toate aici, incerc sa le fac pe toate dar dureaza
-	if T[poz].token=="assert_return":
-		#calculam cele 2 rezultate si daca sunt diferite ne oprim
-		poz=wasmEval(T, poz+1)
-		if isinstance(poz, tuple):
-			return poz
-		poz=wasmEval(T, poz)
-		if isinstance(poz, tuple):
-			return poz
-		x=wasmPop()
-		y=wasmPop()
-		#cred ca va trebui sa modific cate ceva pe aici dar nu mai pot sa mai fac acum
-		if type(x)!=type(y):
-			return ("type mismatch", poz)
-		if x._val!=y._val:
-			return ("AssertFail", poz)
-		return poz
-	
-	if T[poz].token=="assert_invalid":
-		#ne asteptam la o eroare, daca eroarea primita este cea la care ne asteptam, continuam executia, altfel ne oprim
-		#dupa assert_invalid urmeaza un modul si dupa asta un string indicand eroarea ce ar trebui returnata
-		if poz+1>=len(T):
-			return (f"unexpected end of file", poz)
-		poz+=1
-		if T[poz].tokType!="start":
-			return (f"expected '(' found {T[poz].token}", poz+1)
-		if poz+1>=len(T):
-			return (f"unexpected end of file", poz)
-		poz+=1
-		if T[poz].token!="module":
-			return (f"expected \'module\' found {T[poz].token}", poz+1)
-		cntPrnt=1
-		i=poz
-		while cntPrnt and i<len(T):
-			cntPrnt+=int(T[i].tokType=="start")-int(T[i].tokType=="end")
-			i+=1
-		poz+=1
-		x=wasmEval(T, poz)
-		if not isinstance(x, tuple):
-			#nu a aparut vreo eroare, deci assert-ul pica
-			print(x, " ", wasmStack[-1])
-			return ("AssertFail", x)
-		#a aparut o eroare, verific daca e cea dorita
-		y=wasmEvalString(T, i)
-		if len(y)==3:
-			#eroare
-			return (y[1], y[2])
-		#string-ul s-a citit corespunzator
-		if y[0].strip('\"')!=x[0]:
-			#erorile asteptata si primita sunt diferite, assert-ul pica
-			return ("AssertFail", y[1])
-		#assert-ul merge perfect
-		return y[1]
+		return "ok"
 
 #keywords
 def wasmASTEvalKeyword(ast):
 	global variabileLocale
-	t=ast.children[0]
+	t=ast.children[wasmPozEval[-1]]
+	wasmPozEval[-1]+=1
+	
 	#verific care tip de keyword este ca sa stiu cum sa continui
 	if t.token=="drop":
 		#scoate de pe stiva si nu returneaza
 		wasmPop()
-		return None
+		return ""
 	
 	if t.token=="local.get":
-		#alias sau numar
-		#nu mai exista aliase; daca exista atunci e o eroare
-		if isinstance(ast.children[1], AST.AST):
-			wasmASTEval(ast.children[1])
-		else:
-			x=wasmEvalNumber(T, poz)
-			if isinstance(x[0], str):
-				return x
-			poz=x[1]
-			wasmPush(variabileLocale[-1][x[0]])
-		return poz
+		#nu mai exista aliase, daca exista atunci e o eroare
+		if ast.children[wasmPozEval[-1]].tokType=="alias":
+			return "unknown label"
+		wasmPush(variabileLocale[-1][wasmTokenToNumber(ast.children[wasmPozEval[-1]])])
+		wasmPozEval[-1]+=1
+		return ""
 	
 	if t.token=="func":
 		#definire functie
 		F=wasmFunc.wasmFunc()
-		poz=F.make(T, poz)
-		functiiWasm[F.name]=F
-		return poz
+		ans=F.make(ast.toTokenList())
+		if ans!="":
+			return ans
+		if F.invokeName!="":
+			functiiWasm[F.invokeName]=F
+		if F.callName!="":
+			functiiWasm[F.callName]=F
+		wasmPozEval[-1]=len(ast.children)
+		return ""
 	
-	if t.token=="invoke" or t.token=="call":
-		#apel functie
-		poz+=1
-		F=functiiWasm[T[poz].token.strip('\"')]
-		poz+=1
-		poz=wasmEvalFunc(T, poz, F)
-		return poz
+	if t.token=="invoke":
+		#apel functie "exemplu"
+		if ast.children[wasmPozEval[-1]].tokType!="string":
+			return "expected function name string after function invoke"
+		F=functiiWasm[ast.children[wasmPozEval[-1]].token]
+		wasmPozEval[-1]+=1
+		ans=wasmASTCallFunc(ast, F)
+		return ans
+	
+	if t.token=="call":
+		#apel functie $exemplu
+		if ast.children[wasmPozEval[-1]].tokType!="alias":
+			return "expected function alias after function call"
+		F=functiiWasm[ast.children[wasmPozEval[-1]].token]
+		wasmPozEval[-1]+=1
+		ans=wasmASTCallFunc(ast, F)
+		return ans
 	
 	if t.token[:6]=="assert":
-		poz=wasmEvalAssert(T, poz)
-		if isinstance(poz, tuple):
-			#AssertFail
-			return poz
-		#AssertPass
-		return poz
+		assertAns=wasmASTEvalAssert(ast)
+		return assertAns
 	
 	if t.token=="i32.const":
 		#va trebui sa le adaugam si pe celelalte
-		x=wasmEvalNumber(T, poz+1)
-		if isinstance(x[0], str):
-			return x
-		if not isinstance(x[0], i32.i32):
-			if not isinstance(x[0], int):
-				return ("type mismatch", x[1])
-			x=(i32.i32(x[0]), x[1])
-		wasmPush(x[0])
-		return x[1]
+		wasmPush(i32.i32(wasmTokenToNumber(ast.children[wasmPozEval[-1]])))
+		wasmPozEval[-1]+=1
+		return ""
 	
+	#va trebui sa adaugam si celelalte tipuri de date
 	if t.token[:3]=="i32":
 		#o functie aplicata pe i32
-		X=wasmEvalNumber(T, poz+1)
-		if isinstance(X[0], str):
-			return X
-		if aritateFunctii[t.token]==2:
-			Y=wasmEvalNumber(T, X[1])
-			if isinstance(Y[0], str):
-				return Y
-			ans=functiiBaza[t.token](X[0], Y[0])
-			if ans=="TYPE MISMATCH":
-				return ("type mismatch", Y[1])
-			wasmPush(ans)
-			return Y[1]
-		wasmPush(functiiBaza[t.token](i32.i32(X[0])))
-		return X[1]
-	
-	return poz+1
-
-#keywords
-def wasmEvalKeyword(T, poz):
-	global variabileLocale
-	t=T[poz]
-	#verific care tip de keyword este ca sa stiu cum sa continui
-	if t.token=="drop":
-		#scoate de pe stiva si nu returneaza
-		wasmPop()
-		return poz+1
-	
-	if t.token=="local.get":
-		#alias sau numar
-		poz+=1
-		if T[poz].tokType=="alias":
-			x=aliasVariabileLocale[-1][T[poz].token]
-			poz+=1
-			wasmPush(variabileLocale[-1][x])
-		else:
-			x=wasmEvalNumber(T, poz)
-			if isinstance(x[0], str):
+		if isinstance(ast.children[wasmPozEval[-1]], AST.AST):
+			wasmPozEval.append(0)
+			x=wasmASTEvalNumber(ast.children[wasmPozEval[-2]])
+			wasmPozEval.pop()
+			wasmPozEval[-1]+=1
+			if isinstance(x, str):
 				return x
-			poz=x[1]
-			wasmPush(variabileLocale[-1][x[0]])
-		return poz
-	
-	if t.token=="func":
-		#definire functie
-		F=wasmFunc.wasmFunc()
-		poz=F.make(T, poz)
-		functiiWasm[F.name]=F
-		return poz
-	
-	if t.token=="invoke" or t.token=="call":
-		#apel functie
-		poz+=1
-		F=functiiWasm[T[poz].token.strip('\"')]
-		poz+=1
-		poz=wasmEvalFunc(T, poz, F)
-		return poz
-	
-	if t.token[:6]=="assert":
-		poz=wasmEvalAssert(T, poz)
-		if isinstance(poz, tuple):
-			#AssertFail
-			return poz
-		#AssertPass
-		return poz
-	
-	if t.token=="i32.const":
-		#va trebui sa le adaugam si pe celelalte
-		x=wasmEvalNumber(T, poz+1)
-		if isinstance(x[0], str):
-			return x
-		if not isinstance(x[0], i32.i32):
-			if not isinstance(x[0], int):
-				return ("type mismatch", x[1])
-			x=(i32.i32(x[0]), x[1])
-		wasmPush(x[0])
-		return x[1]
-	
-	if t.token[:3]=="i32":
-		#o functie aplicata pe i32
-		X=wasmEvalNumber(T, poz+1)
-		if isinstance(X[0], str):
-			return X
+		else:
+			wasmASTEvalKeyword(ast)
+			x=wasmPop()
+		
 		if aritateFunctii[t.token]==2:
-			Y=wasmEvalNumber(T, X[1])
-			if isinstance(Y[0], str):
-				return Y
-			ans=functiiBaza[t.token](X[0], Y[0])
+			if isinstance(ast.children[wasmPozEval[-1]], AST.AST):
+				wasmPozEval.append(0)
+				y=wasmASTEvalNumber(ast.children[wasmPozEval[-2]])
+				wasmPozEval.pop()
+				wasmPozEval[-1]+=1
+				if isinstance(y, str):
+					return y
+			else:
+				wasmASTEvalKeyword(ast)
+				y=wasmPop()
+			ans=functiiBaza[t.token](x, y)
 			if ans=="TYPE MISMATCH":
-				return ("type mismatch", Y[1])
+				return "type mismatch"
 			wasmPush(ans)
-			return Y[1]
-		wasmPush(functiiBaza[t.token](i32.i32(X[0])))
-		return X[1]
+			return ""
+		ans=functiiBaza[t.token](x)
+		if ans=="TYPE MISMATCH":
+			return "type mismatch"
+		wasmPush(ans)
+		return ""
 	
-	return poz+1
+	#ASTA TREBUIE SCOS INAINTE SA TRIMITEM PROIECTUL
+	if t.token=="print":
+		wasmLogStack()
+	
+	return ""
 
-#functia generala a interpretorului T este lista de tokene, iar poz este pozitia de la care se incepe
-def wasmEval(T, poz):
-	while poz<len(T):
-		t=T[poz]
+#functie generala
+def wasmASTEval(ast):
+	while wasmPozEval[-1]<len(ast.children):
+		t=ast.children[wasmPozEval[-1]]
 		#pentru debug se poate decomenta urmatoarea linie
-		print(f"Eval {T[poz]}")
+		#print(f"Eval {t}")
 		
-		if t.tokType=="start":
-			poz=wasmEval(T, poz+1)
-			if isinstance(poz, tuple):
-				return poz
-			if poz==-1:
-				return -1
-		
-		elif t.tokType=="end":
-			return poz+1
-		
-		if t.tokType=="number":
-			x=wasmEvalNumber(T, poz)
-			if isinstance(x[0], str):
-				return x
-			poz=x[1]
-			wasmPush(x[0])
-		
-		elif t.tokType=="keyword":
-			poz=wasmEvalKeyword(T, poz)
-			if isinstance(poz, tuple):
-				return poz
-		
+		if isinstance(t, tokenizer.Token):
+			if t.tokType=="number":
+				if t.token=="unknown operator":
+					return "unknown operator"
+				#un numar razlet
+				print(f"skipped random number encounter {t.token}")
+				wasmPozEval[-1]+=1
+				#wasmPush(wasmTokenToNumber(t))
+			
+			elif t.tokType=="keyword":
+				ans=wasmASTEvalKeyword(ast)
+				if ans!="":
+					return ans
+			
+			else:
+				print(f"skipped {t.token} cannot interpret it")
+				wasmPozEval[-1]+=1
+			
 		else:
-			poz+=1
-	return -1
+			wasmPozEval.append(0)
+			ans=wasmASTEval(t)
+			wasmPozEval.pop()
+			wasmPozEval[-1]+=1
+			if ans!="":
+				return ans
 
 #functia generala, se apeleaza o data pentru un text/cod sursa.
 def interpret(code):
@@ -504,6 +321,8 @@ def interpret(code):
 	T=tokenizer.Tokenizer(code)
 	A=AST.makeAST(T.tokens)
 	if not A.correct:
-		return "Error, code not well written"
-	wasmASTEval(A)
-	print(*wasmStack, sep='\n')
+		print(A.assertError)
+		return A.assertError
+	ans=wasmASTEval(A)
+	if ans!="":
+		print(ans)

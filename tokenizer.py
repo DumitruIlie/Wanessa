@@ -5,6 +5,7 @@ def listaTipuriTokene():
 			"drop":"keyword",\
 			"func":"keyword",\
 			"param":"keyword",\
+			"result":"keyword",\
 			"export":"keyword",\
 			"invoke":"keyword",\
 			"call":"keyword",\
@@ -46,7 +47,11 @@ def listaTipuriTokene():
 			"i32.ge_s":"keyword",\
 			"i32.ge_u":"keyword",\
 			"nop":"keyword",\
-			"module":"keyword"}
+			"module":"keyword",\
+			#ASTA TREBUIE SCOS INAINTE SA TRIMITEM PROIECTUL
+			"print":"keyword"\
+			
+			}
 
 #functie pentru ignorarea comentariilor si reformatarea codului original la anumite standarde
 def reformat(code):
@@ -75,7 +80,7 @@ def reformat(code):
 			else:
 				aux.append(code[i][j])
 			j+=1
-		code[i]="".join(aux)
+		code[i]="".join(aux).strip('\n')
 	#alipesc tot codul intr-un singur string, dar vreau sa stim in continuare faptul ca acolo se separa codul, iar pentru asta facem join cu un caracter spatiu
 	code=" ".join(code)
 	return code
@@ -96,8 +101,30 @@ def getToken(s):
 		#tipuri aditionale, generale care nu pot fi reprezentate intr-un dictionar
 		if s[0]=='$':
 			tkType="alias"
-		elif '0'<=s[0]<='9' or s[0]=='-':
+		
+		elif '0'<=s[0]<='9' or s[0]=='-' or s[0]=='+':
+			aux=""
+			if s[0]=='-' or s[0]=='+':
+				aux=s[0]
+				s=s[1:]
 			tkType="number"
+			if len(s)>2:
+				#posibil hexa
+				if s[1]=='x':
+					for i in range(2, len(s)):
+						if s[i] not in "0123456789abcdef_ABCDEF":
+							s="unknown operator"
+							break
+				else:
+					for i in range(1, len(s)):
+						if s[i] not in "0123456789_":
+							s="unknown operator"
+							break
+			elif len(s)==2 and not ('0'<=s[1]<='9'):
+				s="unknown operator"
+			if '0'<=s[0]<='9':
+				s=aux+s
+		
 		elif s[0]=='\"':
 			tkType="string"
 	return Token(tkType, s)
@@ -116,21 +143,63 @@ class Tokenizer:
 					curr=[]
 			elif text[i]=='\"':
 				#string
-				curr=[text[i]]
-				i+=1
-				while i<len(text):
-					if text[i]=='\\' and i+1<len(text) and text[i+1]=='\"':
-						curr.append(text[i])
-						i+=1
-					elif text[i]=='\"':
-						curr.append(text[i])
-						i+=1
-						break
-					curr.append(text[i])
+				if curr==[]:
+					curr=[text[i]]
 					i+=1
-				tkType="string"
-				self.tokens.append(Token(tkType, "".join(curr)))
-				curr=[]
+					while i<len(text):
+						if text[i]=='\\' and i+1<len(text) and text[i+1]=='\"':
+							curr.append(text[i])
+							i+=1
+						elif text[i]=='\"':
+							curr.append(text[i])
+							i+=1
+							break
+						curr.append(text[i])
+						i+=1
+					if i==len(text) or text[i]==' ':
+						tkType="string"
+						self.tokens.append(Token(tkType, "".join(curr)))
+						curr=[]
+					else:
+						curr=[]
+						self.tokens.append(Token("number", "unknown operator"))
+						while i<len(text):
+							if text[i]==' ':
+								break
+							if text[i]=='\"':
+								while i<len(text):
+									if text[i]=='\\' and i+1<len(text) and text[i+1]=='\"':
+										i+=1
+									elif text[i]=='\"':
+										i+=1
+										break
+									i+=1
+							else:
+								i+=1
+				else:
+					curr=[]
+					self.tokens.append(Token("number", "unknown operator"))
+					i+=1
+					while i<len(text):
+						if text[i]=='\\' and i+1<len(text) and text[i+1]=='\"':
+							i+=1
+						elif text[i]=='\"':
+							i+=1
+							break
+						i+=1
+					ok=(text[i]==' ')
+					i+=1 if ok else 0
+					while not ok and i<len(text):
+						if text[i]==' ':
+							ok=True
+						elif text[i]=='\"':
+							while i<len(text):
+								if text[i]=='\\' and i+1<len(text) and text[i+1]=='\"':
+									i+=1
+								elif text[i]=='\"':
+									i+=1
+									break
+								i+=1
 			
 			else:
 				curr.append(text[i])
