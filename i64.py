@@ -81,7 +81,7 @@ class i64:
             return ERROR_TYPE_MISMATCH
         if (t2._val == 0):
             return ERROR_TYPE_DIVIDEBY0
-        ans = i64(i64.div_s(t1,t2))
+        ans = i64.div_s(t1,t2)
         ans._val = i64.mul(i64.sub(t1,ans),t2)
         return ans
     def rem_u(t1,t2):
@@ -89,7 +89,7 @@ class i64:
             return ERROR_TYPE_MISMATCH
         if (t2._val == 0):
             return ERROR_TYPE_DIVIDEBY0
-        ans = i64(i64.div_u(t1,t2))
+        ans = i64.div_u(t1,t2)
         ans._val = i64.mul(i64.sub(t1,ans),t2)
         return ans
     def _and(t1,t2):
@@ -110,7 +110,8 @@ class i64:
     def shl(t1, t2):
         if (isinstance(t1,i64) & isinstance(t2,i64)) !=1:
             return ERROR_TYPE_MISMATCH
-        ans = i64(t1._val >> t2._val)
+        ans = i64(t1._val << t2._val)
+        ans.check_overflow()
         return ans
     ### Nu stiu care e diferenta intre shift right signed si shift right unsigned, le fac la fel si le modifici tu cuz I really have no idea
     def shr_s(t1,t2):
@@ -118,16 +119,14 @@ class i64:
         OVERFLOW_FLAG = False
         if (isinstance(t1,i64) & isinstance(t2,i64)) !=1:
             return ERROR_TYPE_MISMATCH
-        ans = i64(t1._val << t2._val)
-        ans.check_overflow()
+        ans = i64(t1._val >> t2._val)
         return ans
     def shr_u(t1,t2):
         global OVERFLOW_FLAG
         OVERFLOW_FLAG = False
         if (isinstance(t1,i64) & isinstance(t2,i64)) !=1:
             return ERROR_TYPE_MISMATCH
-        ans = i64(t1._val << t2._val)
-        ans.check_overflow()
+        ans = i64(t1._val >> t2._val)
         return ans
     def rotl(t1,t2):
         if (isinstance(t1,i64) & isinstance(t2,i64)) !=1:
@@ -163,7 +162,15 @@ class i64:
         while base<=(1<<63):
             if t1._val & base: t2._val+=1
             base = base << 1
-    ### Nu inteleg extend-urile le las pt mai incolo ca sa le termin pe restul
+    def extend8_s(t1):
+        ans = i64(int.from_bytes(t1._val.to_bytes(1, 'little', signed=True), 'little', signed=True))
+        return ans
+    def extend16_s(t1):
+        ans = i64(int.from_bytes(t1._val.to_bytes(2, 'little', signed=True), 'little', signed=True))
+        return ans
+    def extend32_s(t1):
+        ans = i64(int.from_bytes(t1._val.to_bytes(4, 'little', signed=True), 'little', signed=True))
+        return ans
     def eqz(t1):
         if isinstance(t1,i64) !=1:
             return ERROR_TYPE_MISMATCH
