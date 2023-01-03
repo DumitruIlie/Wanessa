@@ -4,9 +4,13 @@ class AST:
 	def __init__(self):
 		self.children=[]
 		self.correct=True
+		self.assertCorrect=True
+		self.assertError=""
 	
 	def myStr(self, indentCnt):
 		if not self.correct:
+			if self.assertError!="":
+				return self.assertError
 			return "Not correct"
 		return '\t'*indentCnt+'(\n'+"\n".join([(x.myStr(indentCnt+1) if isinstance(x, AST) else ('\t'*(indentCnt+1))+str(x)) for x in self.children])+'\n'+'\t'*indentCnt+')'
 	
@@ -16,6 +20,7 @@ class AST:
 	def make(self, tokens, pozStart, pozEnd):
 		self.children=[]
 		self.correct=True
+		self.assertError=""
 		i=pozStart
 		while i<=pozEnd:
 			if tokens[i].tokType=="start":
@@ -29,16 +34,31 @@ class AST:
 					j+=1
 				if countPrnt:
 					self.correct=False
+					self.assertCorrect=False
+					self.assertError="expected )"
 					self.children=[]
 					break
 				A=AST()
 				A.make(tokens, i+1, j-2)
-				if not A.correct:
-					self.correct=False
-					self.children=[]
-					break
 				self.children.append(A)
+				if not A.correct:
+					if not A.assertCorrect:
+						self.assertCorrect=False
+						self.assertError=A.assertError
+						self.correct=False
+						self.children=[]
+						break
+					if isinstance(self.children[0], AST) or self.children[0].token!="assert_malformed":
+						self.correct=False
+						self.assertError=A.assertError
+						self.children=[]
+						break
 				i=j
+			elif tokens[i].tokType=="number" and tokens[i].token=="unknown operator":
+				self.children=[]
+				self.correct=False
+				self.assertError="\"unknown operator\""
+				break
 			else:
 				self.children.append(tokens[i])
 				i+=1
@@ -46,9 +66,13 @@ class AST:
 			self.children=self.children[0].children
 	
 	def toTokenList(self):
-		tokens=[]
+		tokens=[tokenizer.getToken('(')]
 		for child in self.children:
-			tokens.extend(child.toTokenList() if isinstance(child, AST) else [child])
+			if isinstance(child, AST):
+				tokens.extend(child.toTokenList())
+			else:
+				tokens.append(child)
+		tokens.append(tokenizer.getToken(')'))
 		return tokens
 
 def makeAST(tokens):
