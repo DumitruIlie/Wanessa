@@ -1,7 +1,15 @@
 def listaTipuriTokene():
-	return {"i32":"data type",\
+	return {
+			#i think this is done
+			"if":"keyword",\
+			"then":"keyword",\
+			"else":"keyword",\
+			"select":"keyword",\
+			"i32":"data type",\
 			"(":"start",\
 			")":"end",\
+			"nan:canonical":"unexpected token",\
+			"nan:arithmetic":"unexpected token",\
 			"drop":"keyword",\
 			"func":"keyword",\
 			"param":"keyword",\
@@ -11,9 +19,6 @@ def listaTipuriTokene():
 			"call":"keyword",\
 			"local.get":"keyword",\
 			"assert_return":"keyword",\
-			"assert_trap":"keyword",\
-			"assert_invalid":"keyword",\
-			"assert_malformed":"keyword",\
 			"i32.const":"keyword",\
 			"i32.add":"keyword",\
 			"i32.sub":"keyword",\
@@ -80,9 +85,26 @@ def listaTipuriTokene():
 			"i64.ge_u":"keyword",\
 			"nop":"keyword",\
 			"module":"keyword",\
-			#ASTA TREBUIE SCOS INAINTE SA TRIMITEM PROIECTUL
-			"print":"keyword"\
 			
+			#working on
+			
+			#to do
+			"assert_trap":"keyword",\
+			"assert_invalid":"keyword",\
+			"assert_malformed":"keyword",\
+			
+			#to find workaround
+			"loop":"ignored",\
+			"br":"ignored",\
+			"br_if":"ignored",\
+			"br_table":"ignored",\
+			"return":"ignored",\
+			"memory":"ignored",\
+			
+			#ASTEA TREBUIE SCOS INAINTE SA TRIMITEM PROIECTUL
+			"print":"keyword",\
+			"fulldrop":"keyword",\
+			"leveldrop":"keyword"\
 			}
 
 #functie pentru ignorarea comentariilor si reformatarea codului original la anumite standarde

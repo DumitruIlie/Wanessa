@@ -30,7 +30,7 @@ def initWasm():
 def wasmLogStack():
 	print('[')
 	for i in range(len(wasmStack)):
-		print('[', *wasmStack[i], ']')
+		print(' [', *wasmStack[i], ']')
 	print(']')
 
 #adauga pe stiva un element
@@ -41,23 +41,25 @@ def wasmPush(x):
 def wasmPop():
 	return wasmStack[-1].pop()
 
-#numere in baza 10 si 16
 def wasmASTEvalNumber(ast):
 	if isinstance(ast.children[wasmPozEval[-1]], AST.AST):
 		wasmPozEval.append(0)
-		wasmASTEval(ast.children[wasmPozEval[-2]])
+		ans=wasmASTEval(ast.children[wasmPozEval[-2]])
 		wasmPozEval.pop()
 		wasmPozEval[-1]+=1
+		if ans!="":
+			return ans
 		return wasmPop()
 	if ast is None:
-		return wasmPop()
+		return ""
 	if ast.children[wasmPozEval[-1]].tokType=="keyword":
 		wasmASTEvalKeyword(ast)
-		return wasmPop()
+		return ""
 	if ast.children[wasmPozEval[-1]].tokType=="number":
 		if ast.children[wasmPozEval[-1]].token=="unknown operator":
 			return ast.children[wasmPozEval[-1]].token
-		return wasmTokenToNumber(ast.children[wasmPozEval[-1]])
+		wasmPush(wasmTokenToNumber(ast.children[wasmPozEval[-1]]))
+		return ""
 	return "unknown operator"
 
 #transforma un token intr-un numar (int)
@@ -80,13 +82,13 @@ def wasmTokenToNumber(t):
 				x=x*16+ord(t[i])-ord('0')
 			elif 'a'<=t[i]<='f':
 				x=x*16+10+ord(t[i])-ord('a')
+			elif 'A'<=t[i]<='F':
+				x=x*16+10+ord(t[i])-ord('A')
 		return x*sign
 	return int(t)*sign
 
 #functie pentru incarcat parametri si variabile locale + apel la functie
 def wasmASTCallFunc(ast, F):
-	#variabileLocale.append([])
-	#wasmStack.append([])
 	locVar=[]
 	
 	while len(locVar)<len(F.paramTypes):
@@ -104,38 +106,40 @@ def wasmASTCallFunc(ast, F):
 			x=wasmASTEvalNumber(ast.children[wasmPozEval[-2]])
 			wasmPozEval.pop()
 			wasmPozEval[-1]+=1
-			if isinstance(x, str):
-				#trebuie modificat pe aici
-				########################################################################################################################################
+			if x!="":
 				return x
 		else:
-			wasmASTEvalKeyword(ast)
-			x=wasmPop()
+			x=wasmASTEvalKeyword(ast)
+			if x!="":
+				return x
+		x=wasmPop()
 		if not isinstance(x, retType):
 			return "type mismatch"
 		locVar.append(x)
 	
-	variabileLocale.append(locVar)
 	for x in F.localTypes:
-		variabileLocale[-1].append(tipuriDate[x](0))
+		locVar.append(tipuriDate[x](0))
 	
 	if isinstance(F.AST, AST.AST):
+		variabileLocale.append(locVar)
 		wasmStack.append([])
 		wasmPozEval.append(0)
-		wasmASTEval(F.AST)
+		error=wasmASTEval(F.AST)
 		wasmPozEval.pop()
+		variabileLocale.pop()
+		x=wasmStack.pop()
+		if error!="":
+			return error
+		if len(F.results)!=(l:=len(x)):
+			return f"function is expected to return {len(F.results)} values but only returns {l}"
+		for i in range(l):
+			if tipuriDate[F.results[i]]!=type(x[i]):
+				return f"function is expected to return {F.results[i]} but returns {type(x[i])}"
+		wasmStack[-1].extend(x)
+		return ""
 	
-	if len(F.results)!=(l:=len(wasmStack[-1])):
-		wasmStack.pop()
-		return f"function is expected to return {len(F.results)} values but only returns {l}"
-	for i in range(l):
-		if tipuriDate[F.results[i]]!=type(wasmStack[-1][i]):
-			x=wasmStack.pop()[i]
-			return f"function is expected to return {F.results[i]} but returns {type(x)}"
-	
-	variabileLocale.pop()
-	x=wasmStack.pop()
-	wasmStack[-1].extend(x)
+	if F.results!=[]:
+		return "function is expected to return, but has no implementation"
 	return ""
 
 #verifica un assert
@@ -190,6 +194,89 @@ def wasmASTEvalAssert(ast):
 			return "assert fail"
 		#assert-ul merge perfect
 		return "ok"
+	
+	return ast.children[wasmPozEval[-1]].token+" not implemented"
+
+#helper, spune ce tip de structura este ast-ul pentru if
+def wasmASTEvalIfHelper(ast):
+	if isinstance(ast, tokenizer.Token):
+		if ast.tokType=="alias":
+			return "ignore"
+		return f"unexpected {ast.token} after if"
+	if isinstance(ast.children[0], tokenizer.Token):
+		if ast.children[0].token=="then":
+			return "then"
+		if ast.children[0].token=="else":
+			return "else"
+		if ast.children[0].token=="result":
+			return "result"
+		return "conditie"
+	return f"unexpected {ast} after if"
+
+#interpreteaza if cu toate nebuniile lui
+def wasmASTEvalIf(ast):
+	#forma cea mai generala de if:
+	#(if [(result ...)] [(conditie)] (then ...) [(else ...)])
+	resultType=[]
+	conditie=""
+	thenInstr=""
+	elseInstr=""
+	
+	#am trecut peste if deja
+	part=wasmASTEvalIfHelper(ast.children[wasmPozEval[-1]])
+	if part=="ignore":
+		wasmPozEval[-1]+=1
+		part=wasmASTEvalIfHelper(ast.children[wasmPozEval[-1]])
+	if part=="result":
+		for i in range(1, len(ast.children[wasmPozEval[-1]].children)):
+			resultType.append(tipuriDate[ast.children[wasmPozEval[-1]].children[i].token])
+		wasmPozEval[-1]+=1
+		part=wasmASTEvalIfHelper(ast.children[wasmPozEval[-1]])
+	if part=="conditie":
+		conditie=ast.children[wasmPozEval[-1]]
+		wasmPozEval[-1]+=1
+		part=wasmASTEvalIfHelper(ast.children[wasmPozEval[-1]])
+	if part=="then":
+		thenInstr=ast.children[wasmPozEval[-1]]
+		wasmPozEval[-1]+=1
+		if wasmPozEval[-1]<len(ast.children):
+			part=wasmASTEvalIfHelper(ast.children[wasmPozEval[-1]])
+		else:
+			part="done"
+	if part=="else":
+		elseInstr=ast.children[wasmPozEval[-1]]
+		wasmPozEval[-1]+=1
+		part="done"
+	
+	if part!="done":
+		if part[:10]=="unexpected":
+			return part
+		return "unexpected order, "+part+" after if should be earlier"
+	
+	#done reading the instructions, can interpret them now
+	if conditie!="":
+		wasmPozEval.append(0)
+		error=wasmASTEval(conditie)
+		wasmPozEval.pop()
+		if error!="":
+			return error
+	x=wasmPop()
+	if x._val!=0:
+		#True
+		wasmPozEval.append(0)
+		error=wasmASTEval(thenInstr)
+		wasmPozEval.pop()
+		if error!="":
+			return error
+	elif elseInstr!="":
+		#False
+		wasmPozEval.append(0)
+		error=wasmASTEval(elseInstr)
+		wasmPozEval.pop()
+		if error!="":
+			return error
+	#returnez din if simplu deoarece se pune automat pe stiva
+	return ""
 
 #keywords
 def wasmASTEvalKeyword(ast):
@@ -197,8 +284,17 @@ def wasmASTEvalKeyword(ast):
 	wasmPozEval[-1]+=1
 	
 	#verific care tip de keyword este ca sa stiu cum sa continui
+	if t.token in {"module", "then", "else", "nop", "result"}:
+		return ""
+	
 	if t.token=="drop":
-		#scoate de pe stiva si nu returneaza
+		#scoate de pe stiva si nu returneaza sau executa ce urmeaza si scoate de pe stiva
+		if len(ast.children)!=1:
+			#executa ce urmeaza
+			error=wasmASTEval(ast)
+			if error!="":
+				return error
+		#scoate de pe stiva
 		wasmPop()
 		return ""
 	
@@ -235,7 +331,7 @@ def wasmASTEvalKeyword(ast):
 	if t.token=="call":
 		#apel functie $exemplu
 		if ast.children[wasmPozEval[-1]].tokType!="alias":
-			return "expected function alias after function call"
+			return "expected function label after function call"
 		F=functiiWasm[ast.children[wasmPozEval[-1]].token]
 		wasmPozEval[-1]+=1
 		ans=wasmASTCallFunc(ast, F)
@@ -294,12 +390,57 @@ def wasmASTEvalKeyword(ast):
 			return "type mismatch"
 		wasmPush(ans)
 		return ""
-		
+	
+	if t.token=="if":
+		ans=wasmASTEvalIf(ast)
+		return ans
+	
+	if t.token=="select":
+		#evaluam 3 chestii, a 3-a spune care din cele 2 este pusa pe stiva/returnata
+		if wasmPozEval[-1]+3!=len(ast.children):
+			return f"expected exactly 3 expresions after select but found {len(ast.children)-wasmPozEval[-1]-3}"
+		if not isinstance(ast.children[wasmPozEval[-1]], AST.AST) or not isinstance(ast.children[wasmPozEval[-1]+1], AST.AST) or not isinstance(ast.children[wasmPozEval[-1]+2], AST.AST):
+			return "expected brace enclosed expresion after select"
+		wasmPozEval.append(0)
+		error=wasmASTEval(ast.children[wasmPozEval[-2]])
+		wasmPozEval.pop()
+		if error!="":
+			return error
+		wasmPozEval.append(0)
+		error=wasmASTEval(ast.children[wasmPozEval[-2]+1])
+		wasmPozEval.pop()
+		if error!="":
+			return error
+		wasmPozEval.append(0)
+		error=wasmASTEval(ast.children[wasmPozEval[-2]+2])
+		wasmPozEval.pop()
+		if error!="":
+			return error
+		wasmPozEval[-1]+=3
+		z=wasmPop()
+		y=wasmPop()
+		x=wasmPop()
+		if z._val:
+			wasmPush(x)
+		else:
+			wasmPush(y)
+		return ""
+	
 	#ASTA TREBUIE SCOS INAINTE SA TRIMITEM PROIECTUL
 	if t.token=="print":
 		wasmLogStack()
+		return ""
 	
-	return ""
+	if t.token=="fulldrop":
+		global wasmStack
+		wasmStack=[]
+		return ""
+	
+	if t.token=="leveldrop":
+		wasmStack[-1]=[]
+		return ""
+	
+	return "not implemented "+t.token
 
 #functie generala
 def wasmASTEval(ast):
@@ -315,7 +456,6 @@ def wasmASTEval(ast):
 				#un numar razlet
 				print(f"skipped random number encounter {t.token}")
 				wasmPozEval[-1]+=1
-				#wasmPush(wasmTokenToNumber(t))
 			
 			elif t.tokType=="keyword":
 				ans=wasmASTEvalKeyword(ast)

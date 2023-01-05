@@ -6,186 +6,26 @@ De notat: tutorialul spune ca ai push si pop pe stiva automat, iar o operatie ia
 Cred ca ar fi bine sa le luam pe rand si sa incercam sa facem interpretorul sa mearga "linie cu linie", adica sa vedem ce trebuie sa avem, de ex.: i32.add, i32.sub, etc. si apoi sa facem verificare la assert-uri
 Sugerez o reformatare inainte de a rula codul, detalii in funtia reformat
 
+Descoperire importanta: (i32.add) face suma intre 2 elemente de pe stiva; (i32.add (...) (...)) face suma celor 2 "expresii" ce urmeaza
+Similar pentru drop, i32.etc, i64.etc.
+Important de asemenea: if (then ...) (else ...) inseamna ca se verifica varful stivei
+(block ...) restrictioneaza stiva la blocul curent
+(block INSTR1 br x INSTR2) ;; br x trece peste ce urmeaza si iese din block-uri pana la al x-1-lea. br 0 iese din block-ul principal, br 1 iese din primul block "nested", ...
 
-Pentru Giulian
-(module (funcAdd (param i32) (param i32) (result i32) (i32.add (local.get 0) (local.get 1))))
-(
-)
-module
-funcAdd
-param
-i32
-result
-i32.add
-local.get
-0 1 -> nr intregi baza 10
-0xFFFFFFFF -> nr intregi hexa
+br_if pare ca evalueaza cele 2 chestii ce urmeaza, prima e raspunsul si a doua e conditia sub care ala e raspunsul
+daca conditia e indeplinita, se returneaza valoarea/se iese din block
+altfel, valoarea inca se mentine pe stiva programului si ar trebui dropata
 
-(func (export "add") (param $x i32) (param $y i32) (result i32) (i32.add (local.get $x) (local.get $y)))
-func
-export
-"add" -> string
-$x $y -> aliasuri parametri/variabile locale
+(return INSTR ...) pare ca instructiunile ce urmeaza definesc rezultatele. Pare insa ca return se poate ignora fara probleme intrucat doar pune pe stiva niste valori, asta am face normal.
 
-(func (export "add") (param $x i32) (param $y i32) (result i32) (i32.add (local.get $x) (local.get $y)))
-declarare functie:
-(func (export "nume_fct") (param [alias ex: $x] i32))
+Done:
+avem lipsuri in cod care nu imi dau seama ce reprezinta. I THINK IS FIXED
+termina de interpretat if. I THINK IS FIXED
 
-(func (export "add") (param $x i32) (param $y i32) (result i32) (i32.add (local.get $x) (local.get $y)))
-(
-	func;
-	(
-		export;
-		"add";
-	);
-	(
-		param;
-		$x;
-		i32;
-	);
-	(
-		param;
-		$y;
-		i32;
-	);
-	(
-		result;
-		i32;
-	);
-	(
-		i32.add;
-		(
-			local.get;
-			&x;
-		);
-		(
-			local.get;
-			&y;
-		);
-	);
-)
-
-(
-	func;
-	(
-		export;
-		"nume";
-	);
-	(
-		param;
-		[alias];
-		tip;
-		[alias];
-		tip;
-		[alias];
-		tip;
-		...
-		[alias];
-		tip;
-	);
-	(
-		result;
-		tip;
-		tip;
-		tip;
-		...
-		tip;
-	);
-	(
-		local;
-		[alias];
-		tip;
-		[alias];
-		tip;
-		[alias];
-		tip;
-		...
-		[alias];
-		tip;
-	);
-	(
-		instr;
-		instr;
-		instr;
-		...
-		instr;
-		numar;
-		numar;
-		numar;
-		...
-		numar;
-	)
-)
-
-;;urmatorul AST este ok pentru ca avem instructiunea adunare urmata de 2 AST-uri ce reprezinta numere
-;;similar recursiv
-(
-	i32.add;
-	(
-		i32.add;
-		(
-			i32.add;
-			(
-				i32.const;
-				number;
-			);
-			(
-				i32.const;
-				number;
-			);
-		);
-		(
-			i32.const;
-			number;
-		);
-	);
-	(
-		i32.add;
-		(
-			i32.const;
-			number;
-		);
-		(
-			i32.const;
-			number;
-		);
-	);
-)
-
-
-O sa incerc sa definesc gramatica pentru wasm.
-S -> INSTRN
-INSTRN ->INSTR INSTRN | INSTR
-
-INSTR -> ( INSTR ) | ( FUNC_DEF ) | ( FUNC_CALL ) | ( IF_ELSE_INSTR ) | ( SWITCH_INSTR ) | ( CONSTANTA ) | ( OPERATIE SIMPLA ) | < nimic >
-
-FUNC_DEF -> ( func ALIAS FUNC_DEF_PRM ) | ( func (export "STRING") FUNC_DEF_PRM ) | ( func FUNC_DEF_PRM )
-FUNC_DEF_PRM -> (param LISTA_PARAMETRII) FUNC_DEF_RET | FUNC_DEF_RET
-FUNC_DEF_RET -> (result LISTA_RETURN) FUNC_DEF_LOC | FUNC_DEF_LOC
-FUNC_DEF_LOC -> (local LISTA_LOCALE) ( INSTRN ) | ( INSTRN )
-
-ALIAS -> $STRING
-LISTA_PARAMETRII -> TIP_DATA LISTA_PARAMETRII | TIP_DATA ALIAS LISTA_PARAMETRII | TIP_DATA | TIP_DATA ALIAS
-LISTA_RETURN -> TIP_DATA LISTA_RETURN | TIP_DATA
-LISTA_LOCALE -> TIP_DATA LISTA_LOCALE | TIP_DATA ALIAS LISTA_LOCALE | TIP_DATA | TIP_DATA ALIAS
-
-STRING -> aSTRING | a | bSTRING | b | cSTRING | c | dSTRING | d | eSTRING | e | fSTRING | f | gSTRING | g | hSTRING | h | iSTRING | i | jSTRING | j | kSTRING | k | lSTRING | l | mSTRING | m | nSTRING | n | oSTRING | o | pSTRING | p | qSTRING | q | rSTRING | r | sSTRING | s | tSTRING | t | uSTRING | u | vSTRING | v | wSTRING | w | xSTRING | x | ySTRING | y | zSTRING | z
-TIP_DATA -> i32 | i64 | f32 | f64 | i16x8 | i8x16
-
-FUNC_CALL -> ( invoke "STRING" ) | ( invoke "STRING" LISTA_VARIABILE ) | ( call ALIAS ) | ( call ALIAS LISTA_VARIABILE )
-LISTA_VARIABILE -> VARIABILA LISTA_VARIABILE | VARIABILA
-VARIABILA -> local.get ALIAS | local.get NUMAR | ( INSTR )
-NUMAR -> NUMAR_10 | NUMAR_16
-NUMAR_10 -> 0 | 1NUMAR_0_10 | 1 | 2NUMAR_0_10 | 2 | 3NUMAR_0_10 | 3 | 4NUMAR_0_10 | 4 | 5NUMAR_0_10 | 5 | 6NUMAR_0_10 | 6 | 7NUMAR_0_10 | 7 | 8NUMAR_0_10 | 8 | 9NUMAR_0_10 | 9
-NUMAR_0_10 -> 0NUMAR_0_10 | 0 | 1NUMAR_0_10 | 1 | 2NUMAR_0_10 | 2 | 3NUMAR_0_10 | 3 | 4NUMAR_0_10 | 4 | 5NUMAR_0_10 | 5 | 6NUMAR_0_10 | 6 | 7NUMAR_0_10 | 7 | 8NUMAR_0_10 | 8 | 9NUMAR_0_10 | 9
-NUMAR_16 -> 0xNUMAR_0_16
-NUMAR_0_16 -> 0NUMAR_0_16 | 0 | 1NUMAR_0_16 | 1 | 2NUMAR_0_16 | 2 | 3NUMAR_0_16 | 3 | 4NUMAR_0_16 | 4 | 5NUMAR_0_16 | 5 | 6NUMAR_0_16 | 6 | 7NUMAR_0_16 | 7 | 8NUMAR_0_16 | 8 | 9NUMAR_0_16 | 9 | ANUMAR_0_16 | aNUMAR_0_16 | a | A | BNUMAR_0_16 | bNUMAR_0_16 | b | B | CNUMAR_0_16 | cNUMAR_0_16 | c | C | DNUMAR_0_16 | dNUMAR_0_16 | d | D | ENUMAR_0_16 | eNUMAR_0_16 | e | E | FNUMAR_0_16 | fNUMAR_0_16 | f | F
-
-IF_ELSE_INSTR -> 
-
-
-
-
-
-
-
+TO DO:
+what is call_indirect, table, funcref, elem, global, mut, type, unreachable
+de interpretat/gasit_workaround-uri loop, block, return si altele
+va trebui sa te apuci sa limitezi scope-ul din stiva pe care il au anumite instructiuni, de ex intr-un block nu se pot accesa valori ce au fost puse pe stiva inainte de block. ;; cred ca daca adaug o noua lista in stiva programului nu va fi mare problema.
+de facut assert-urile sa functioneze ;; cum trebuie si sa fie toate
+simd
+switch
