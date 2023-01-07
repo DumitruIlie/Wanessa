@@ -1,0 +1,52 @@
+(module
+	;; returneaza n
+	(func $stationar (param $n i32) (result i32) (
+			(local.tee $n (local.get $n))
+		)
+	)
+	
+	;; returneaza n-1
+	(func $decrement (param $n i32) (result i32) (
+			(local.tee $n (i32.sub (local.get $n) (i32.const 1)))
+		)
+	)
+	
+	;; interschimba n si m si returneaza ordinea inversa
+	(func $swap (param $n i32 $m i32) (result i32 i32) (local $aux i32) (
+			(local.set $aux (local.get $n))
+			(local.tee $n (local.get $m))
+			(local.tee $m (local.get $aux))
+		)
+	)
+	
+	;; teste pentru stationar
+	(call $stationar (i32.const 0))
+	(call $stationar (i32.const 1))
+	(call $stationar (i32.const 5))
+	(call $stationar (i32.const 0xFFFF))
+	(call $stationar (i32.const 0xFFFFFFFF))
+	(call $stationar (i32.const -1))
+	(print)
+	(leveldrop)
+	
+	;; teste pentru decrement
+	(call $decrement (i32.const 0))
+	(call $decrement (i32.const 1))
+	(call $decrement (i32.const 2))
+	(call $decrement (i32.const 20))
+	(call $decrement (i32.const 0xFFFF))
+	(call $decrement (i32.const 0xFFFFFFFF))
+	(call $decrement (i32.const 0x80000000))
+	(print)
+	(leveldrop)
+	
+	;; teste pentru swap
+	(call $swap (i32.const 0) (i32.const 0))
+	(call $swap (i32.const 0) (i32.const 1))
+	(call $swap (i32.const 1) (i32.const 0))
+	(call $swap (i32.const 0) (i32.const 10))
+	(call $swap (i32.const -1) (i32.const 1))
+	(call $swap (i32.const 0) (i32.const 0xFFFF))
+	(print)
+	(leveldrop)
+)
