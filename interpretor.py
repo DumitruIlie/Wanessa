@@ -6,6 +6,7 @@ import i64
 
 wasmStack=[]
 variabileLocale=[]
+tipuriDateVariabileLocale=[]
 functiiWasm=dict()
 wasmPozEval=[]
 aritateFunctii={"i32.add":2, "i32.sub":2, "i32.mul":2, "i32.div_s":2, "i32.div_u":2, "i32.rem_s":2, "i32.rem_u":2, "i32.and":2, "i32.or":2, "i32.xor":2, "i32.shl":2, "i32.shr_s":2, "i32.shr_u":2, "i32.rotl":2, "i32.rotr":2,\
@@ -49,7 +50,7 @@ def wasmASTEvalNumber(ast):
 		wasmPozEval[-1]+=1
 		if ans!="":
 			return ans
-		return wasmPop()
+		return ""
 	if ast is None:
 		return ""
 	if ast.children[wasmPozEval[-1]].tokType=="keyword":
@@ -90,16 +91,10 @@ def wasmTokenToNumber(t):
 #functie pentru incarcat parametri si variabile locale + apel la functie
 def wasmASTCallFunc(ast, F):
 	locVar=[]
+	locVarTypes=[]
 	
 	while len(locVar)<len(F.paramTypes):
-		retType=int
-		if F.paramTypes[len(locVar)]=="i32":
-			retType=i32.i32
-		elif F.paramTypes[len(locVar)]=="i64":
-			retType=i64.i64
-		elif F.paramTypes[len(locVar)]=="f32":
-			#retType=f32.f32
-			pass
+		retType=tipuriDate[F.paramTypes[len(locVar)]]
 		
 		if isinstance(ast.children[wasmPozEval[-1]], AST.AST):
 			wasmPozEval.append(0)
@@ -116,16 +111,20 @@ def wasmASTCallFunc(ast, F):
 		if not isinstance(x, retType):
 			return "type mismatch"
 		locVar.append(x)
+		locVarTypes.append(retType)
 	
 	for x in F.localTypes:
 		locVar.append(tipuriDate[x](0))
+		locVarTypes.append(tipuriDate[x])
 	
 	if isinstance(F.AST, AST.AST):
 		variabileLocale.append(locVar)
+		tipuriDateVariabileLocale.append(locVarTypes)
 		wasmStack.append([])
 		wasmPozEval.append(0)
 		error=wasmASTEval(F.AST)
 		wasmPozEval.pop()
+		tipuriDateVariabileLocale.pop()
 		variabileLocale.pop()
 		x=wasmStack.pop()
 		if error!="":
@@ -261,13 +260,17 @@ def wasmASTEvalIf(ast):
 		if error!="":
 			return error
 	x=wasmPop()
+	
 	if x._val!=0:
 		#True
-		wasmPozEval.append(0)
-		error=wasmASTEval(thenInstr)
-		wasmPozEval.pop()
-		if error!="":
-			return error
+		if thenInstr!="":
+			wasmPozEval.append(0)
+			error=wasmASTEval(thenInstr)
+			wasmPozEval.pop()
+			if error!="":
+				return error
+			return ""
+		return "expected then after if"
 	elif elseInstr!="":
 		#False
 		wasmPozEval.append(0)
@@ -304,6 +307,34 @@ def wasmASTEvalKeyword(ast):
 			return "unknown label"
 		wasmPush(variabileLocale[-1][wasmTokenToNumber(ast.children[wasmPozEval[-1]])])
 		wasmPozEval[-1]+=1
+		return ""
+	
+	if t.token=="local.set":
+		#nu mai exista aliase, daca exista atunci e o eroare
+		if ast.children[wasmPozEval[-1]].tokType=="alias":
+			return "unknown label"
+		i=wasmTokenToNumber(ast.children[wasmPozEval[-1]])
+		wasmPozEval[-1]+=1
+		if len(ast.children)==wasmPozEval[-1]:
+			#setam variabila la valoarea de pe stiva
+			x=wasmPop()
+			if isinstance(x, tipuriDateVariabileLocale[-1][i]):
+				variabileLocale[-1][i]=x
+				return ""
+			return "type mismatch"
+		#evaluam urmatoarea expresie si setam variabila la aceasta valoarea
+		if not isinstance(ast.children[wasmPozEval[-1]], AST.AST):
+			return "expected expresion after local.set"
+		wasmPozEval.append(0)
+		error=wasmASTEval(ast.children[wasmPozEval[-2]])
+		wasmPozEval.pop()
+		wasmPozEval[-1]+=1
+		x=wasmPop()
+		if error!="":
+			return error
+		if tipuriDateVariabileLocale[-1][i]!=type(x):
+			return "type mismatch"
+		variabileLocale[-1][i]=x
 		return ""
 	
 	if t.token=="func":
@@ -363,11 +394,11 @@ def wasmASTEvalKeyword(ast):
 			x=wasmASTEvalNumber(ast.children[wasmPozEval[-2]])
 			wasmPozEval.pop()
 			wasmPozEval[-1]+=1
-			if isinstance(x, str):
+			if x!="":
 				return x
 		else:
 			wasmASTEvalKeyword(ast)
-			x=wasmPop()
+		x=wasmPop()
 		
 		if aritateFunctii[t.token]==2:
 			if isinstance(ast.children[wasmPozEval[-1]], AST.AST):
@@ -375,12 +406,13 @@ def wasmASTEvalKeyword(ast):
 				y=wasmASTEvalNumber(ast.children[wasmPozEval[-2]])
 				wasmPozEval.pop()
 				wasmPozEval[-1]+=1
-				if isinstance(y, str):
+				if y!="":
 					return y
 			else:
 				wasmASTEvalKeyword(ast)
-				y=wasmPop()
+			y=wasmPop()
 			ans=functiiBaza[t.token](x, y)
+			
 			if ans=="TYPE MISMATCH":
 				return "type mismatch"
 			wasmPush(ans)

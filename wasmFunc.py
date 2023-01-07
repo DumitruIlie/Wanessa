@@ -52,7 +52,23 @@ class wasmFunc:
 				self.params=dict()
 				return ""
 		
-		if T[poz].token=='local':
+		if T[poz].token=='result':
+			#tip de return
+			poz+=1
+			while T[poz].tokType!='end':
+				self.results.append(T[poz].token)
+				poz+=1
+			poz+=1
+		
+		
+		if poz>=len(T):
+			self.params=dict()
+			self.localVars=dict()
+			return ""
+		
+		if T[poz].token=='local' or (T[poz].tokType=='start' and T[poz+1].token=="local"):
+			if T[poz].token!='local':
+				poz+=1
 			#variabile locale(tip si alias)
 			poz+=1
 			while T[poz].tokType!='end':
@@ -68,13 +84,6 @@ class wasmFunc:
 			self.params=dict()
 			self.localVars=dict()
 			return ""
-		if T[poz].token=='result':
-			#tip de return
-			poz+=1
-			while T[poz].tokType!='end':
-				self.results.append(T[poz].token)
-				poz+=1
-			poz+=1
 		
 		#instructiunile functiei, le stochez ca o lista si le transform in AST dupa
 		cntParant=1

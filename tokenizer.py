@@ -18,6 +18,7 @@ def listaTipuriTokene():
 			"invoke":"keyword",\
 			"call":"keyword",\
 			"local.get":"keyword",\
+			"local.set":"keyword",\
 			"assert_return":"keyword",\
 			"i32.const":"keyword",\
 			"i32.add":"keyword",\
