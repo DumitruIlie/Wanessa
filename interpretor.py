@@ -40,12 +40,14 @@ def wasmPush(x):
 
 #scoate si returneaza ultimul obiect de pe stiva
 def wasmPop():
+	if len(wasmStack[-1])==0:
+		return "type mismatch"
 	return wasmStack[-1].pop()
 
-def wasmASTEvalNumber(ast):
+def wasmEvalNumber(ast):
 	if isinstance(ast.children[wasmPozEval[-1]], AST.AST):
 		wasmPozEval.append(0)
-		ans=wasmASTEval(ast.children[wasmPozEval[-2]])
+		ans=wasmEval(ast.children[wasmPozEval[-2]])
 		wasmPozEval.pop()
 		wasmPozEval[-1]+=1
 		if ans!="":
@@ -54,7 +56,7 @@ def wasmASTEvalNumber(ast):
 	if ast is None:
 		return ""
 	if ast.children[wasmPozEval[-1]].tokType=="keyword":
-		wasmASTEvalKeyword(ast)
+		wasmEvalKeyword(ast)
 		return ""
 	if ast.children[wasmPozEval[-1]].tokType=="number":
 		if ast.children[wasmPozEval[-1]].token=="unknown operator":
@@ -89,7 +91,7 @@ def wasmTokenToNumber(t):
 	return int(t)*sign
 
 #functie pentru incarcat parametri si variabile locale + apel la functie
-def wasmASTCallFunc(ast, F):
+def wasmCallFunc(ast, F):
 	locVar=[]
 	locVarTypes=[]
 	
@@ -98,13 +100,13 @@ def wasmASTCallFunc(ast, F):
 		
 		if isinstance(ast.children[wasmPozEval[-1]], AST.AST):
 			wasmPozEval.append(0)
-			x=wasmASTEvalNumber(ast.children[wasmPozEval[-2]])
+			x=wasmEvalNumber(ast.children[wasmPozEval[-2]])
 			wasmPozEval.pop()
 			wasmPozEval[-1]+=1
 			if x!="":
 				return x
 		else:
-			x=wasmASTEvalKeyword(ast)
+			x=wasmEvalKeyword(ast)
 			if x!="":
 				return x
 		x=wasmPop()
@@ -122,7 +124,7 @@ def wasmASTCallFunc(ast, F):
 		tipuriDateVariabileLocale.append(locVarTypes)
 		wasmStack.append([])
 		wasmPozEval.append(0)
-		error=wasmASTEval(F.AST)
+		error=wasmEval(F.AST)
 		wasmPozEval.pop()
 		tipuriDateVariabileLocale.pop()
 		variabileLocale.pop()
@@ -142,7 +144,7 @@ def wasmASTCallFunc(ast, F):
 	return ""
 
 #verifica un assert
-def wasmASTEvalAssert(ast):
+def wasmEvalAssert(ast):
 	#momentan nu sunt toate aici, incerc sa le fac pe toate dar dureaza
 	if ast.children[wasmPozEval[-1]].token=="assert_return":
 		wasmPozEval[-1]+=1
@@ -150,7 +152,7 @@ def wasmASTEvalAssert(ast):
 		if isinstance(ast.children[wasmPozEval[-1]], AST.AST):
 			wasmStack.append([])
 			wasmPozEval.append(0)
-			x=wasmASTEval(ast.children[wasmPozEval[-2]])
+			x=wasmEval(ast.children[wasmPozEval[-2]])
 			wasmPozEval.pop()
 			wasmPozEval[-1]+=1
 			if x!="":
@@ -161,7 +163,7 @@ def wasmASTEvalAssert(ast):
 		for i in range(wasmPozEval[-1], len(ast.children)):
 			if isinstance(ast.children[i], AST.AST):
 				wasmPozEval.append(0)
-				x=wasmASTEval(ast.children[i])
+				x=wasmEval(ast.children[i])
 				wasmPozEval.pop()
 				if x!="":
 					return "assert fail because of "+x
@@ -184,7 +186,7 @@ def wasmASTEvalAssert(ast):
 		if not isinstance(ast.children[wasmPozEval[-1]], AST.AST):
 			return "assert fail"
 		wasmPozEval.append(0)
-		eroare=wasmASTEval(ast.children[wasmPozEval[-2]])
+		eroare=wasmEval(ast.children[wasmPozEval[-2]])
 		wasmPozEval.pop()
 		wasmPozEval[-1]+=1
 		y=ast.children[wasmPozEval[-1]].token
@@ -197,7 +199,7 @@ def wasmASTEvalAssert(ast):
 	return ast.children[wasmPozEval[-1]].token+" not implemented"
 
 #interpreteaza if cu toate nebuniile lui
-def wasmASTEvalIf(ast):
+def wasmEvalIf(ast):
 	#forma cea mai generala de if:
 	#(if [(result ...)] [(conditie)] (then ...) [(else ...)])
 	resultType=[]
@@ -206,7 +208,7 @@ def wasmASTEvalIf(ast):
 	elseInstr=""
 	
 	#helper, spune ce tip de structura este ast-ul pentru if
-	def wasmASTEvalIfHelper(ast):
+	def wasmEvalIfHelper(ast):
 		if isinstance(ast, tokenizer.Token):
 			if ast.tokType=="alias":
 				return "ignore"
@@ -222,24 +224,24 @@ def wasmASTEvalIf(ast):
 		return f"unexpected {ast} after if"
 	
 	#am trecut peste if deja
-	part=wasmASTEvalIfHelper(ast.children[wasmPozEval[-1]])
+	part=wasmEvalIfHelper(ast.children[wasmPozEval[-1]])
 	if part=="ignore":
 		wasmPozEval[-1]+=1
-		part=wasmASTEvalIfHelper(ast.children[wasmPozEval[-1]])
+		part=wasmEvalIfHelper(ast.children[wasmPozEval[-1]])
 	if part=="result":
 		for i in range(1, len(ast.children[wasmPozEval[-1]].children)):
 			resultType.append(tipuriDate[ast.children[wasmPozEval[-1]].children[i].token])
 		wasmPozEval[-1]+=1
-		part=wasmASTEvalIfHelper(ast.children[wasmPozEval[-1]])
+		part=wasmEvalIfHelper(ast.children[wasmPozEval[-1]])
 	if part=="conditie":
 		conditie=ast.children[wasmPozEval[-1]]
 		wasmPozEval[-1]+=1
-		part=wasmASTEvalIfHelper(ast.children[wasmPozEval[-1]])
+		part=wasmEvalIfHelper(ast.children[wasmPozEval[-1]])
 	if part=="then":
 		thenInstr=ast.children[wasmPozEval[-1]]
 		wasmPozEval[-1]+=1
 		if wasmPozEval[-1]<len(ast.children):
-			part=wasmASTEvalIfHelper(ast.children[wasmPozEval[-1]])
+			part=wasmEvalIfHelper(ast.children[wasmPozEval[-1]])
 		else:
 			part="done"
 	if part=="else":
@@ -255,17 +257,19 @@ def wasmASTEvalIf(ast):
 	#done reading the instructions, can interpret them now
 	if conditie!="":
 		wasmPozEval.append(0)
-		error=wasmASTEval(conditie)
+		error=wasmEval(conditie)
 		wasmPozEval.pop()
 		if error!="":
 			return error
 	x=wasmPop()
+	if x=="type mismatch":
+		return x
 	
 	if x._val!=0:
 		#True
 		if thenInstr!="":
 			wasmPozEval.append(0)
-			error=wasmASTEval(thenInstr)
+			error=wasmEval(thenInstr)
 			wasmPozEval.pop()
 			if error!="":
 				return error
@@ -274,7 +278,7 @@ def wasmASTEvalIf(ast):
 	elif elseInstr!="":
 		#False
 		wasmPozEval.append(0)
-		error=wasmASTEval(elseInstr)
+		error=wasmEval(elseInstr)
 		wasmPozEval.pop()
 		if error!="":
 			return error
@@ -282,7 +286,7 @@ def wasmASTEvalIf(ast):
 	return ""
 
 #keywords
-def wasmASTEvalKeyword(ast):
+def wasmEvalKeyword(ast):
 	t=ast.children[wasmPozEval[-1]]
 	wasmPozEval[-1]+=1
 	
@@ -294,11 +298,13 @@ def wasmASTEvalKeyword(ast):
 		#scoate de pe stiva si nu returneaza sau executa ce urmeaza si scoate de pe stiva
 		if len(ast.children)!=1:
 			#executa ce urmeaza
-			error=wasmASTEval(ast)
+			error=wasmEval(ast)
 			if error!="":
 				return error
 		#scoate de pe stiva
-		wasmPop()
+		x=wasmPop()
+		if x=="type mismatch":
+			return x
 		return ""
 	
 	if t.token=="local.get":
@@ -326,7 +332,7 @@ def wasmASTEvalKeyword(ast):
 		if not isinstance(ast.children[wasmPozEval[-1]], AST.AST):
 			return "expected expresion after local.set"
 		wasmPozEval.append(0)
-		error=wasmASTEval(ast.children[wasmPozEval[-2]])
+		error=wasmEval(ast.children[wasmPozEval[-2]])
 		wasmPozEval.pop()
 		wasmPozEval[-1]+=1
 		x=wasmPop()
@@ -355,7 +361,7 @@ def wasmASTEvalKeyword(ast):
 		if not isinstance(ast.children[wasmPozEval[-1]], AST.AST):
 			return "expected expresion after local.set"
 		wasmPozEval.append(0)
-		error=wasmASTEval(ast.children[wasmPozEval[-2]])
+		error=wasmEval(ast.children[wasmPozEval[-2]])
 		wasmPozEval.pop()
 		wasmPozEval[-1]+=1
 		x=wasmPop()
@@ -385,7 +391,7 @@ def wasmASTEvalKeyword(ast):
 			return "expected function name string after function invoke"
 		F=functiiWasm[ast.children[wasmPozEval[-1]].token]
 		wasmPozEval[-1]+=1
-		ans=wasmASTCallFunc(ast, F)
+		ans=wasmCallFunc(ast, F)
 		return ans
 	
 	if t.token=="call":
@@ -394,15 +400,8 @@ def wasmASTEvalKeyword(ast):
 			return "expected function label after function call"
 		F=functiiWasm[ast.children[wasmPozEval[-1]].token]
 		wasmPozEval[-1]+=1
-		ans=wasmASTCallFunc(ast, F)
+		ans=wasmCallFunc(ast, F)
 		return ans
-	
-	if t.token[:6]=="assert":
-		wasmPozEval[-1]-=1
-		assertAns=wasmASTEvalAssert(ast)
-		if assertAns!="ok":
-			return assertAns
-		return ""
 	
 	if t.token=="i32.const":
 		#va trebui sa le adaugam si pe celelalte
@@ -420,26 +419,30 @@ def wasmASTEvalKeyword(ast):
 		#o functie aplicata pe i32 sau i64
 		if isinstance(ast.children[wasmPozEval[-1]], AST.AST):
 			wasmPozEval.append(0)
-			x=wasmASTEvalNumber(ast.children[wasmPozEval[-2]])
+			x=wasmEvalNumber(ast.children[wasmPozEval[-2]])
 			wasmPozEval.pop()
 			wasmPozEval[-1]+=1
 			if x!="":
 				return x
 		else:
-			wasmASTEvalKeyword(ast)
+			wasmEvalKeyword(ast)
 		x=wasmPop()
+		if x=="type mismatch":
+			return x
 		
 		if aritateFunctii[t.token]==2:
 			if isinstance(ast.children[wasmPozEval[-1]], AST.AST):
 				wasmPozEval.append(0)
-				y=wasmASTEvalNumber(ast.children[wasmPozEval[-2]])
+				y=wasmEvalNumber(ast.children[wasmPozEval[-2]])
 				wasmPozEval.pop()
 				wasmPozEval[-1]+=1
 				if y!="":
 					return y
 			else:
-				wasmASTEvalKeyword(ast)
+				wasmEvalKeyword(ast)
 			y=wasmPop()
+			if y=="type mismatch":
+				return y
 			ans=functiiBaza[t.token](x, y)
 			
 			if ans=="TYPE MISMATCH":
@@ -453,7 +456,7 @@ def wasmASTEvalKeyword(ast):
 		return ""
 	
 	if t.token=="if":
-		ans=wasmASTEvalIf(ast)
+		ans=wasmEvalIf(ast)
 		return ans
 	
 	if t.token=="select":
@@ -463,24 +466,30 @@ def wasmASTEvalKeyword(ast):
 		if not isinstance(ast.children[wasmPozEval[-1]], AST.AST) or not isinstance(ast.children[wasmPozEval[-1]+1], AST.AST) or not isinstance(ast.children[wasmPozEval[-1]+2], AST.AST):
 			return "expected brace enclosed expresion after select"
 		wasmPozEval.append(0)
-		error=wasmASTEval(ast.children[wasmPozEval[-2]])
+		error=wasmEval(ast.children[wasmPozEval[-2]])
 		wasmPozEval.pop()
 		if error!="":
 			return error
 		wasmPozEval.append(0)
-		error=wasmASTEval(ast.children[wasmPozEval[-2]+1])
+		error=wasmEval(ast.children[wasmPozEval[-2]+1])
 		wasmPozEval.pop()
 		if error!="":
 			return error
 		wasmPozEval.append(0)
-		error=wasmASTEval(ast.children[wasmPozEval[-2]+2])
+		error=wasmEval(ast.children[wasmPozEval[-2]+2])
 		wasmPozEval.pop()
 		if error!="":
 			return error
 		wasmPozEval[-1]+=3
 		z=wasmPop()
+		if z=="type mismatch":
+			return z
 		y=wasmPop()
+		if y=="type mismatch":
+			return y
 		x=wasmPop()
+		if x=="type mismatch":
+			return x
 		if z._val:
 			wasmPush(x)
 		else:
@@ -492,8 +501,8 @@ def wasmASTEvalKeyword(ast):
 		wasmLogStack()
 		return ""
 	
+	global wasmStack
 	if t.token=="fulldrop":
-		global wasmStack
 		wasmStack=[]
 		return ""
 	
@@ -504,7 +513,7 @@ def wasmASTEvalKeyword(ast):
 	return "not implemented "+t.token
 
 #functie generala
-def wasmASTEval(ast):
+def wasmEval(ast):
 	while wasmPozEval[-1]<len(ast.children):
 		t=ast.children[wasmPozEval[-1]]
 		#pentru debug se poate decomenta urmatoarea linie
@@ -518,8 +527,13 @@ def wasmASTEval(ast):
 				print(f"skipped random number encounter {t.token}")
 				wasmPozEval[-1]+=1
 			
+			elif t.tokType=="assert":
+				ans=wasmEvalAssert(ast)
+				if ans!="":
+					return ans
+			
 			elif t.tokType=="keyword":
-				ans=wasmASTEvalKeyword(ast)
+				ans=wasmEvalKeyword(ast)
 				if ans!="":
 					return ans
 			
@@ -529,7 +543,7 @@ def wasmASTEval(ast):
 			
 		else:
 			wasmPozEval.append(0)
-			ans=wasmASTEval(t)
+			ans=wasmEval(t)
 			wasmPozEval.pop()
 			wasmPozEval[-1]+=1
 			if ans!="":
@@ -544,6 +558,6 @@ def interpret(code):
 	if not A.correct:
 		print(A.assertError)
 		return A.assertError
-	ans=wasmASTEval(A)
+	ans=wasmEval(A)
 	if ans!="":
 		print(ans)
