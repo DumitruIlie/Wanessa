@@ -1,0 +1,43 @@
+(module
+	(func $recursiv (param $n i32) (result i32)
+		(local $sum i32) ;; prin conventie toate variabilele locale sunt initializate cu 0
+		(
+			;; daca dispare conventia atunci decomenteaza urmatoarea linie
+			;;(local.set $sum (i32.const 0))
+			(if (local.get $n)
+				(then (local.set $sum (i32.add (local.get $n) (call $recursiv (i32.sub (local.get $n) (i32.const 1))))))
+			)
+			(local.get $sum)
+		)
+	)
+	
+	(func $formula (param $n i32) (result i32)
+		(i32.div_s (
+			i32.mul (local.get $n) (i32.add (local.get $n) (i32.const 1))
+		) (i32.const 2))
+	)
+	
+	(func $sub_that (param $n i32) (param $m i32) (result i32)
+		(i32.sub (local.get $n) (local.get $m))
+	)
+	
+	(func $decrement (param $n i32) (result i32)
+		(i32.sub (local.get $n) (i32.const 1))
+	)
+	
+	(call $recursiv (i32.const 0))
+	(call $recursiv (i32.const 1))
+	(call $recursiv (i32.const 2))
+	(call $recursiv (i32.const 3))
+	(call $recursiv (i32.const 4))
+	(call $recursiv (i32.const 5))
+	(print)
+	(leveldrop)
+	(call $formula (i32.const 0))
+	(call $formula (i32.const 1))
+	(call $formula (i32.const 2))
+	(call $formula (i32.const 3))
+	(call $formula (i32.const 4))
+	(call $formula (i32.const 5))
+	(print)
+)
