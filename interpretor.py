@@ -196,22 +196,6 @@ def wasmASTEvalAssert(ast):
 	
 	return ast.children[wasmPozEval[-1]].token+" not implemented"
 
-#helper, spune ce tip de structura este ast-ul pentru if
-def wasmASTEvalIfHelper(ast):
-	if isinstance(ast, tokenizer.Token):
-		if ast.tokType=="alias":
-			return "ignore"
-		return f"unexpected {ast.token} after if"
-	if isinstance(ast.children[0], tokenizer.Token):
-		if ast.children[0].token=="then":
-			return "then"
-		if ast.children[0].token=="else":
-			return "else"
-		if ast.children[0].token=="result":
-			return "result"
-		return "conditie"
-	return f"unexpected {ast} after if"
-
 #interpreteaza if cu toate nebuniile lui
 def wasmASTEvalIf(ast):
 	#forma cea mai generala de if:
@@ -220,6 +204,22 @@ def wasmASTEvalIf(ast):
 	conditie=""
 	thenInstr=""
 	elseInstr=""
+	
+	#helper, spune ce tip de structura este ast-ul pentru if
+	def wasmASTEvalIfHelper(ast):
+		if isinstance(ast, tokenizer.Token):
+			if ast.tokType=="alias":
+				return "ignore"
+			return f"unexpected {ast.token} after if"
+		if isinstance(ast.children[0], tokenizer.Token):
+			if ast.children[0].token=="then":
+				return "then"
+			if ast.children[0].token=="else":
+				return "else"
+			if ast.children[0].token=="result":
+				return "result"
+			return "conditie"
+		return f"unexpected {ast} after if"
 	
 	#am trecut peste if deja
 	part=wasmASTEvalIfHelper(ast.children[wasmPozEval[-1]])
@@ -307,6 +307,35 @@ def wasmASTEvalKeyword(ast):
 			return "unknown label"
 		wasmPush(variabileLocale[-1][wasmTokenToNumber(ast.children[wasmPozEval[-1]])])
 		wasmPozEval[-1]+=1
+		return ""
+	
+	if t.token=="local.tee":
+		#nu mai exista aliase, daca exista atunci e o eroare
+		if ast.children[wasmPozEval[-1]].tokType=="alias":
+			return "unknown label"
+		i=wasmTokenToNumber(ast.children[wasmPozEval[-1]])
+		wasmPozEval[-1]+=1
+		if len(ast.children)==wasmPozEval[-1]:
+			#setam variabila la valoarea de pe stiva
+			x=wasmPop()
+			if isinstance(x, tipuriDateVariabileLocale[-1][i]):
+				variabileLocale[-1][i]=x
+				return ""
+			return "type mismatch"
+		#evaluam urmatoarea expresie si setam variabila la aceasta valoarea
+		if not isinstance(ast.children[wasmPozEval[-1]], AST.AST):
+			return "expected expresion after local.set"
+		wasmPozEval.append(0)
+		error=wasmASTEval(ast.children[wasmPozEval[-2]])
+		wasmPozEval.pop()
+		wasmPozEval[-1]+=1
+		x=wasmPop()
+		if error!="":
+			return error
+		if tipuriDateVariabileLocale[-1][i]!=type(x):
+			return "type mismatch"
+		variabileLocale[-1][i]=x
+		wasmPush(x)
 		return ""
 	
 	if t.token=="local.set":
