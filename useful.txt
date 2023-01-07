@@ -29,3 +29,4 @@ va trebui sa te apuci sa limitezi scope-ul din stiva pe care il au anumite instr
 de facut assert-urile sa functioneze ;; cum trebuie si sa fie toate
 simd
 switch
+improve the speed at which the interpretor finds the closing paranthesis

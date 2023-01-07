@@ -12,11 +12,13 @@ wasmPozEval=[]
 aritateFunctii={"i32.add":2, "i32.sub":2, "i32.mul":2, "i32.div_s":2, "i32.div_u":2, "i32.rem_s":2, "i32.rem_u":2, "i32.and":2, "i32.or":2, "i32.xor":2, "i32.shl":2, "i32.shr_s":2, "i32.shr_u":2, "i32.rotl":2, "i32.rotr":2,\
 				"i32.clz":1, "i32.ctz":1, "i32.popcnt":1, "i32.extend8_s":1, "i32.extend16_s":1, "i32.eqz":1, "i32.eq":2, "i32.ne":2, "i32.lt_s":2, "i32.lt_u":2, "i32.le_s":2, "i32.le_u":2, "i32.gt_s":2, "i32.gt_u":2, "i32.ge_s":2, "i32.ge_u":2,\
 				"i64.add":2, "i64.sub":2, "i64.mul":2, "i64.div_s":2, "i64.div_u":2, "i64.rem_s":2, "i64.rem_u":2, "i64.and":2, "i64.or":2, "i64.xor":2, "i64.shl":2, "i64.shr_s":2, "i64.shr_u":2, "i64.rotl":2, "i64.rotr":2,\
-				"i64.clz":1, "i64.ctz":1, "i64.popcnt":1, "i64.extend8_s":1, "i64.extend16_s":1, "i64.eqz":1, "i64.eq":2, "i64.ne":2, "i64.lt_s":2, "i64.lt_u":2, "i64.le_s":2, "i64.le_u":2, "i64.gt_s":2, "i64.gt_u":2, "i64.ge_s":2, "i64.ge_u":2}
+				"i64.clz":1, "i64.ctz":1, "i64.popcnt":1, "i64.extend8_s":1, "i64.extend16_s":1, "i64.eqz":1, "i64.eq":2, "i64.ne":2, "i64.lt_s":2, "i64.lt_u":2, "i64.le_s":2, "i64.le_u":2, "i64.gt_s":2, "i64.gt_u":2, "i64.ge_s":2, "i64.ge_u":2,\
+				"i64.extend32_s":1}
 functiiBaza={"i32.add":i32.i32.add, "i32.sub":i32.i32.sub, "i32.mul":i32.i32.mul, "i32.div_s":i32.i32.div_s, "i32.div_u":i32.i32.div_u, "i32.rem_s":i32.i32.rem_s, "i32.rem_u":i32.i32.rem_u, "i32.and":i32.i32._and, "i32.or":i32.i32._or, "i32.xor":i32.i32._xor, "i32.shl":i32.i32.shl, "i32.shr_s":i32.i32.shr_s, "i32.shr_u":i32.i32.shr_u, "i32.rotl":i32.i32.rotl, "i32.rotr":i32.i32.rotr,\
 			 "i32.clz":i32.i32.clz, "i32.ctz":i32.i32.ctz, "i32.popcnt":i32.i32.popcnt, "i32.extend8_s":i32.i32.extend8_s, "i32.extend16_s":i32.i32.extend16_s, "i32.eqz":i32.i32.eqz, "i32.eq":i32.i32.eq, "i32.ne":i32.i32.ne, "i32.lt_s":i32.i32.lt_s, "i32.lt_u":i32.i32.lt_u, "i32.le_s":i32.i32.le_s, "i32.le_u":i32.i32.le_u, "i32.gt_s":i32.i32.gt_s, "i32.gt_u":i32.i32.gt_u, "i32.ge_s":i32.i32.ge_s, "i32.ge_u":i32.i32.ge_u,\
 			 "i64.add":i64.i64.add, "i64.sub":i64.i64.sub, "i64.mul":i64.i64.mul, "i64.div_s":i64.i64.div_s, "i64.div_u":i64.i64.div_u, "i64.rem_s":i64.i64.rem_s, "i64.rem_u":i64.i64.rem_u, "i64.and":i64.i64._and, "i64.or":i64.i64._or, "i64.xor":i64.i64._xor, "i64.shl":i64.i64.shl, "i64.shr_s":i64.i64.shr_s, "i64.shr_u":i64.i64.shr_u, "i64.rotl":i64.i64.rotl, "i64.rotr":i64.i64.rotr,\
-			 "i64.clz":i64.i64.clz, "i64.ctz":i64.i64.ctz, "i64.popcnt":i64.i64.popcnt, "i64.extend8_s":i64.i64.extend8_s, "i64.extend16_s":i64.i64.extend16_s, "i64.eqz":i64.i64.eqz, "i64.eq":i64.i64.eq, "i64.ne":i64.i64.ne, "i64.lt_s":i64.i64.lt_s, "i64.lt_u":i64.i64.lt_u, "i64.le_s":i64.i64.le_s, "i64.le_u":i64.i64.le_u, "i64.gt_s":i64.i64.gt_s, "i64.gt_u":i64.i64.gt_u, "i64.ge_s":i64.i64.ge_s, "i64.ge_u":i64.i64.ge_u}
+			 "i64.clz":i64.i64.clz, "i64.ctz":i64.i64.ctz, "i64.popcnt":i64.i64.popcnt, "i64.extend8_s":i64.i64.extend8_s, "i64.extend16_s":i64.i64.extend16_s, "i64.eqz":i64.i64.eqz, "i64.eq":i64.i64.eq, "i64.ne":i64.i64.ne, "i64.lt_s":i64.i64.lt_s, "i64.lt_u":i64.i64.lt_u, "i64.le_s":i64.i64.le_s, "i64.le_u":i64.i64.le_u, "i64.gt_s":i64.i64.gt_s, "i64.gt_u":i64.i64.gt_u, "i64.ge_s":i64.i64.ge_s, "i64.ge_u":i64.i64.ge_u,\
+			 "i64.extend32_s":i64.i64.extend32_s}
 tipuriDate={"i32":i32.i32, "i64":i64.i64}#, "f32":f32.f32}
 
 #initializeaza interpretorul
@@ -45,6 +47,8 @@ def wasmPop():
 	return wasmStack[-1].pop()
 
 def wasmEvalNumber(ast):
+	if len(ast.children)<=wasmPozEval[-1]:
+		return "\"type mismatch\""
 	if isinstance(ast.children[wasmPozEval[-1]], AST.AST):
 		wasmPozEval.append(0)
 		ans=wasmEval(ast.children[wasmPozEval[-2]])
@@ -54,7 +58,7 @@ def wasmEvalNumber(ast):
 			return ans
 		return ""
 	if ast is None:
-		return ""
+		return "\"type mismatch\""
 	if ast.children[wasmPozEval[-1]].tokType=="keyword":
 		wasmEvalKeyword(ast)
 		return ""
@@ -158,7 +162,7 @@ def wasmEvalAssert(ast):
 			if x!="":
 				return "assert fail because of "+x
 		else:
-			return f"assert fail"
+			return f"assert fail because expected expresion after assert_return"
 		wasmStack.append([])
 		for i in range(wasmPozEval[-1], len(ast.children)):
 			if isinstance(ast.children[i], AST.AST):
@@ -168,7 +172,7 @@ def wasmEvalAssert(ast):
 				if x!="":
 					return "assert fail because of "+x
 			else:
-				return "assert fail"
+				return "assert fail because expected expresion after assert_return"
 		wasmPozEval[-1]=len(ast.children)
 		y=wasmStack.pop()
 		x=wasmStack.pop()
@@ -179,20 +183,21 @@ def wasmEvalAssert(ast):
 				return f"assert fail because {i}-th values differ ({type(x[i])}, {x[i]._val}) != ({type(y[i])}, {y[i]._val})"
 		return "ok"
 	
-	if ast.children[wasmPozEval[-1]].token=="assert_invalid":
+	if ast.children[wasmPozEval[-1]].token=="assert_invalid" or ast.children[wasmPozEval[-1]].token=="assert_trap":
 		wasmPozEval[-1]+=1
 		#ne asteptam la o eroare, daca eroarea primita este cea la care ne asteptam, assert-ul trece, altfel pica
 		#dupa assert_invalid urmeaza un modulul ce trebuie sa dea eroare si dupa un string indicand eroarea ce ar trebui ridicata
 		if not isinstance(ast.children[wasmPozEval[-1]], AST.AST):
-			return "assert fail"
+			return "assert fail because expected expresion after assert_return"
 		wasmPozEval.append(0)
 		eroare=wasmEval(ast.children[wasmPozEval[-2]])
 		wasmPozEval.pop()
 		wasmPozEval[-1]+=1
 		y=ast.children[wasmPozEval[-1]].token
+		wasmPozEval[-1]+=1
 		if y!=eroare:
 			#erorile asteptata si primita sunt diferite, assert-ul pica
-			return "assert fail"
+			return f"assert fail because expected error {y} but received {eroare}"
 		#assert-ul merge perfect
 		return "ok"
 	
@@ -414,8 +419,7 @@ def wasmEvalKeyword(ast):
 		wasmPozEval[-1]+=1
 		return ""
 	
-	#va trebui sa adaugam si celelalte tipuri de date
-	if t.token[:3]=="i32" or t.token[:3]=="i64":
+	if t.token in functiiBaza:
 		#o functie aplicata pe i32 sau i64
 		if isinstance(ast.children[wasmPozEval[-1]], AST.AST):
 			wasmPozEval.append(0)
@@ -441,17 +445,21 @@ def wasmEvalKeyword(ast):
 			else:
 				wasmEvalKeyword(ast)
 			y=wasmPop()
-			if y=="type mismatch":
+			if y=="\"type mismatch\"":
 				return y
 			ans=functiiBaza[t.token](x, y)
 			
 			if ans=="TYPE MISMATCH":
-				return "type mismatch"
+				return "\"type mismatch\""
+			if ans=="INTEGER DIVIDE BY ZERO":
+				return "\"integer divide by zero\""
+			if ans=="INTEGER OVERFLOW":
+				return "\"integer overflow\""
 			wasmPush(ans)
 			return ""
 		ans=functiiBaza[t.token](x)
 		if ans=="TYPE MISMATCH":
-			return "type mismatch"
+			return "\"type mismatch\""
 		wasmPush(ans)
 		return ""
 	
@@ -529,7 +537,7 @@ def wasmEval(ast):
 			
 			elif t.tokType=="assert":
 				ans=wasmEvalAssert(ast)
-				if ans!="":
+				if ans!="ok":
 					return ans
 			
 			elif t.tokType=="keyword":

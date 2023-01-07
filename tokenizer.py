@@ -1,25 +1,39 @@
 def listaTipuriTokene():
 	return {
 			#i think this is done
+			
+			#if
 			"if":"keyword",\
 			"then":"keyword",\
 			"else":"keyword",\
 			"select":"keyword",\
+			
+			#data types
 			"i32":"data type",\
+			"i64":"data type",\
+			"f32":"data type",\
+			
+			#syntax
 			"(":"start",\
 			")":"end",\
-			"nan:canonical":"unexpected token",\
-			"nan:arithmetic":"unexpected token",\
-			"drop":"keyword",\
+			
+			#functions
+			"module":"keyword",\
 			"func":"keyword",\
 			"param":"keyword",\
 			"result":"keyword",\
 			"export":"keyword",\
 			"invoke":"keyword",\
 			"call":"keyword",\
+			
+			#simple operations
+			"nop":"keyword",\
+			"drop":"keyword",\
 			"local.get":"keyword",\
 			"local.set":"keyword",\
-			"assert_return":"keyword",\
+			"local.tee":"keyword",\
+			
+			#i32 operations
 			"i32.const":"keyword",\
 			"i32.add":"keyword",\
 			"i32.sub":"keyword",\
@@ -52,6 +66,8 @@ def listaTipuriTokene():
 			"i32.gt_u":"keyword",\
 			"i32.ge_s":"keyword",\
 			"i32.ge_u":"keyword",\
+			
+			#i64 operations
 			"i64.const":"keyword",\
 			"i64.add":"keyword",\
 			"i64.sub":"keyword",\
@@ -73,6 +89,7 @@ def listaTipuriTokene():
 			"i64.popcnt":"keyword",\
 			"i64.extend8_s":"keyword",\
 			"i64.extend16_s":"keyword",\
+			"i64.extend32_s":"keyword",\
 			"i64.eqz":"keyword",\
 			"i64.eq":"keyword",\
 			"i64.ne":"keyword",\
@@ -84,25 +101,30 @@ def listaTipuriTokene():
 			"i64.gt_u":"keyword",\
 			"i64.ge_s":"keyword",\
 			"i64.ge_u":"keyword",\
-			"nop":"keyword",\
-			"module":"keyword",\
+			
+			#asserts
+			"assert_return":"assert",\
+			"assert_trap":"assert",\
 			
 			#working on
+			"assert_invalid":"assert",\
+			"assert_malformed":"assert",\
 			
 			#to do
-			"assert_trap":"keyword",\
-			"assert_invalid":"keyword",\
-			"assert_malformed":"keyword",\
+			
+			#workaround
+			"nan:canonical":"unexpected token",\
+			"nan:arithmetic":"unexpected token",\
+			"return":"ignored",\
 			
 			#to find workaround
 			"loop":"ignored",\
 			"br":"ignored",\
 			"br_if":"ignored",\
 			"br_table":"ignored",\
-			"return":"ignored",\
 			"memory":"ignored",\
 			
-			#ASTEA TREBUIE SCOS INAINTE SA TRIMITEM PROIECTUL
+			#debug, pot fi sterse complet(preferabil totusi sa fie pastrate)
 			"print":"keyword",\
 			"fulldrop":"keyword",\
 			"leveldrop":"keyword"\
