@@ -95,6 +95,8 @@ class wasmFunc:
 				self.localVars=dict()
 				self.tokens.append(T[poz])
 				self.AST=AST.makeAST(self.tokens)
+				if not isinstance(self.AST, AST.AST):
+					return "function cannot be interpreted because"+self.AST
 				self.tokens=[]
 				return ""
 			

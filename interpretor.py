@@ -563,6 +563,9 @@ def interpret(code):
 	initWasm()
 	T=tokenizer.Tokenizer(code)
 	A=AST.makeAST(T.tokens)
+	if not isinstance(A, AST.AST):
+		print("code cannot be interpreted because "+A)
+		return A
 	if not A.correct:
 		print(A.assertError)
 		return A.assertError

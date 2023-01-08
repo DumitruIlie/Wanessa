@@ -17,7 +17,7 @@ class AST:
 	def __str__(self):
 		return self.myStr(0)
 	
-	def make(self, tokens, pozStart, pozEnd):
+	def make(self, tokens, pozStart, pozEnd, paranthesis):
 		self.children=[]
 		self.correct=True
 		self.assertError=""
@@ -39,7 +39,7 @@ class AST:
 					self.children=[]
 					break
 				A=AST()
-				A.make(tokens, i+1, j-2)
+				A.make(tokens, i+1, j-2, paranthesis)
 				self.children.append(A)
 				if not A.correct:
 					if not A.assertCorrect:
@@ -77,5 +77,17 @@ class AST:
 
 def makeAST(tokens):
 	A=AST()
-	A.make(tokens, 0, len(tokens)-1)
+	paranthesis=[-1]*len(tokens)
+	st=[]
+	for i in range(len(tokens)-1, -1, -1):
+		if tokens[i].tokType=="end":
+			st.append(i)
+		elif tokens[i].tokType=="start":
+			if len(st):
+				paranthesis[i]=st.pop()
+			else:
+				return "missing matching )"
+	if len(st):
+		return "missing matching ("
+	A.make(tokens, 0, len(tokens)-1, paranthesis)
 	return A
