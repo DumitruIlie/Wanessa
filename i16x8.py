@@ -4,20 +4,21 @@ class i16x8:
         #???
         self._x = 0
     def extadd_pairwise_i8x16_s(t):
-        list_zero = [0 for _ in range(8)]
-        type_resulted = "16x8"
-        ans = v128(type_resulted,list_zero)
-        for i in range(0,8):
-            ans._v[i] = t._v[i*2] + t._v[i*2+1]
-        for i in range(0,len(ans._v)):
-            ans._v[i] = ans._v[i] & (2**9 - 1)
-            if ans._v[i] & 2**8:
-                ans._v[i] -= 2**9
-        return ans
+        t._type = "16x8"
+        for i in range(0,16,2):
+            t._v[i//2] = t._v[i] + t._v[i+1]
+        t._v = t._v[:8]
+        for i in range(0,len(t._v)):
+            t._v[i] = t._v[i] & (2**9 - 1)
+            if t._v[i] & 2**8:
+                t._v[i] -= 2**9
     def extadd_pairwise_i8x16_u(t):
-        list_zero = [0 for _ in range(8)]
-        type_resulted = "16x8"
-        ans = v128(type_resulted,list_zero)
-        for i in range(0,8):
-            ans._v[i] = t._v[i*2] + t._v[i*2+1]
-        return ans
+        t._type = "16x8"
+        for i in range(0,16,2):
+            t._v[i//2] = t._v[i] + t._v[i+1]
+        t._v = t._v[:8]
+
+
+aj = v128("8x16",[255,255,127,127,0,0,0,0,0,0,0,0,0,0,0,0])
+i16x8.extadd_pairwise_i8x16_u(aj)
+print(aj)
