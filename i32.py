@@ -1,3 +1,4 @@
+import i64
 ERROR_TYPE_MISMATCH = "TYPE MISMATCH"
 ERROR_TYPE_DIVIDEBY0 = "INTEGER DIVIDE BY ZERO"
 ERROR_TYPE_OVERFLOW = "INTEGER OVERFLOW"
@@ -264,5 +265,10 @@ class i32:
         if (isinstance(t1,i32) & isinstance(t2,i32)) !=1:
             return ERROR_TYPE_MISMATCH
         return i32._or(i32.eq(t1,t2),i32.gt_u(t1,t2))
+    def wrap_i64(t1):
+        if not isinstance((t1,i64)):
+            return ERROR_TYPE_MISMATCH
+        ans = i32(t1)
+        return ans
     def __str__(self):
         return f"{self._val}"
