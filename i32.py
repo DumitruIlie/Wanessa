@@ -266,9 +266,9 @@ class i32:
             return ERROR_TYPE_MISMATCH
         return i32._or(i32.eq(t1,t2),i32.gt_u(t1,t2))
     def wrap_i64(t1):
-        if not isinstance((t1,i64)):
+        if not isinstance(t1,i64.i64):
             return ERROR_TYPE_MISMATCH
-        ans = i32(t1)
+        ans = i32(t1._val)
         return ans
     def __str__(self):
         return f"{self._val}"

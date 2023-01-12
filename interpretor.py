@@ -9,13 +9,15 @@ variabileLocale=[]
 tipuriDateVariabileLocale=[]
 functiiWasm=dict()
 wasmPozEval=[]
+wasmBlocksCount=0
+wasmBlockAlias=dict()
 aritateFunctii={"i32.add":2, "i32.sub":2, "i32.mul":2, "i32.div_s":2, "i32.div_u":2, "i32.rem_s":2, "i32.rem_u":2, "i32.and":2, "i32.or":2, "i32.xor":2, "i32.shl":2, "i32.shr_s":2, "i32.shr_u":2, "i32.rotl":2, "i32.rotr":2,\
-				"i32.clz":1, "i32.ctz":1, "i32.popcnt":1, "i32.extend8_s":1, "i32.extend16_s":1, "i32.eqz":1, "i32.eq":2, "i32.ne":2, "i32.lt_s":2, "i32.lt_u":2, "i32.le_s":2, "i32.le_u":2, "i32.gt_s":2, "i32.gt_u":2, "i32.ge_s":2, "i32.ge_u":2,\
+				"i32.clz":1, "i32.ctz":1, "i32.popcnt":1, "i32.extend8_s":1, "i32.extend16_s":1, "i32.wrap_i64":1, "i32.eqz":1, "i32.eq":2, "i32.ne":2, "i32.lt_s":2, "i32.lt_u":2, "i32.le_s":2, "i32.le_u":2, "i32.gt_s":2, "i32.gt_u":2, "i32.ge_s":2, "i32.ge_u":2,\
 				"i64.add":2, "i64.sub":2, "i64.mul":2, "i64.div_s":2, "i64.div_u":2, "i64.rem_s":2, "i64.rem_u":2, "i64.and":2, "i64.or":2, "i64.xor":2, "i64.shl":2, "i64.shr_s":2, "i64.shr_u":2, "i64.rotl":2, "i64.rotr":2,\
 				"i64.clz":1, "i64.ctz":1, "i64.popcnt":1, "i64.extend8_s":1, "i64.extend16_s":1, "i64.eqz":1, "i64.eq":2, "i64.ne":2, "i64.lt_s":2, "i64.lt_u":2, "i64.le_s":2, "i64.le_u":2, "i64.gt_s":2, "i64.gt_u":2, "i64.ge_s":2, "i64.ge_u":2,\
 				"i64.extend32_s":1}
 functiiBaza={"i32.add":i32.i32.add, "i32.sub":i32.i32.sub, "i32.mul":i32.i32.mul, "i32.div_s":i32.i32.div_s, "i32.div_u":i32.i32.div_u, "i32.rem_s":i32.i32.rem_s, "i32.rem_u":i32.i32.rem_u, "i32.and":i32.i32._and, "i32.or":i32.i32._or, "i32.xor":i32.i32._xor, "i32.shl":i32.i32.shl, "i32.shr_s":i32.i32.shr_s, "i32.shr_u":i32.i32.shr_u, "i32.rotl":i32.i32.rotl, "i32.rotr":i32.i32.rotr,\
-			 "i32.clz":i32.i32.clz, "i32.ctz":i32.i32.ctz, "i32.popcnt":i32.i32.popcnt, "i32.extend8_s":i32.i32.extend8_s, "i32.extend16_s":i32.i32.extend16_s, "i32.eqz":i32.i32.eqz, "i32.eq":i32.i32.eq, "i32.ne":i32.i32.ne, "i32.lt_s":i32.i32.lt_s, "i32.lt_u":i32.i32.lt_u, "i32.le_s":i32.i32.le_s, "i32.le_u":i32.i32.le_u, "i32.gt_s":i32.i32.gt_s, "i32.gt_u":i32.i32.gt_u, "i32.ge_s":i32.i32.ge_s, "i32.ge_u":i32.i32.ge_u,\
+			 "i32.clz":i32.i32.clz, "i32.ctz":i32.i32.ctz, "i32.popcnt":i32.i32.popcnt, "i32.extend8_s":i32.i32.extend8_s, "i32.extend16_s":i32.i32.extend16_s, "i32.wrap_i64":i32.i32.wrap_i64, "i32.eqz":i32.i32.eqz, "i32.eq":i32.i32.eq, "i32.ne":i32.i32.ne, "i32.lt_s":i32.i32.lt_s, "i32.lt_u":i32.i32.lt_u, "i32.le_s":i32.i32.le_s, "i32.le_u":i32.i32.le_u, "i32.gt_s":i32.i32.gt_s, "i32.gt_u":i32.i32.gt_u, "i32.ge_s":i32.i32.ge_s, "i32.ge_u":i32.i32.ge_u,\
 			 "i64.add":i64.i64.add, "i64.sub":i64.i64.sub, "i64.mul":i64.i64.mul, "i64.div_s":i64.i64.div_s, "i64.div_u":i64.i64.div_u, "i64.rem_s":i64.i64.rem_s, "i64.rem_u":i64.i64.rem_u, "i64.and":i64.i64._and, "i64.or":i64.i64._or, "i64.xor":i64.i64._xor, "i64.shl":i64.i64.shl, "i64.shr_s":i64.i64.shr_s, "i64.shr_u":i64.i64.shr_u, "i64.rotl":i64.i64.rotl, "i64.rotr":i64.i64.rotr,\
 			 "i64.clz":i64.i64.clz, "i64.ctz":i64.i64.ctz, "i64.popcnt":i64.i64.popcnt, "i64.extend8_s":i64.i64.extend8_s, "i64.extend16_s":i64.i64.extend16_s, "i64.eqz":i64.i64.eqz, "i64.eq":i64.i64.eq, "i64.ne":i64.i64.ne, "i64.lt_s":i64.i64.lt_s, "i64.lt_u":i64.i64.lt_u, "i64.le_s":i64.i64.le_s, "i64.le_u":i64.i64.le_u, "i64.gt_s":i64.i64.gt_s, "i64.gt_u":i64.i64.gt_u, "i64.ge_s":i64.i64.ge_s, "i64.ge_u":i64.i64.ge_u,\
 			 "i64.extend32_s":i64.i64.extend32_s}
@@ -28,6 +30,8 @@ def initWasm():
 	variabileLocale=[]
 	functiiWasm=dict()
 	wasmPozEval=[0]
+	wasmBlockAlias=dict()
+	wasmBlocksCount=0
 
 #functie de test, ajuta la debug, TREBUIE NEAPARAT STEARSA INAINTE SA TRIMITEM PROIECTUL
 def wasmLogStack():
@@ -60,8 +64,9 @@ def wasmEvalNumber(ast):
 	if ast is None:
 		return "\"type mismatch\""
 	if ast.children[wasmPozEval[-1]].tokType=="keyword":
-		wasmEvalKeyword(ast)
-		return ""
+		return wasmEvalKeyword(ast)
+	if ast.children[wasmPozEval[-1]].tokType=="block":
+		return wasmEvalBlock(ast)
 	if ast.children[wasmPozEval[-1]].tokType=="number":
 		if ast.children[wasmPozEval[-1]].token=="unknown operator":
 			return ast.children[wasmPozEval[-1]].token
@@ -134,12 +139,16 @@ def wasmCallFunc(ast, F):
 		variabileLocale.pop()
 		x=wasmStack.pop()
 		if error!="":
-			return error
+			if isinstance(error, tuple) and error[0]=="return from function":
+				#rezultatul este strict ce primim din error
+				x=error[1]
+			else:
+				return error
 		if len(F.results)!=(l:=len(x)):
-			return f"function is expected to return {len(F.results)} values but only returns {l}"
+			return f"function is expected to return {len(F.results)} values but returns {l}"
 		for i in range(l):
 			if tipuriDate[F.results[i]]!=type(x[i]):
-				return f"function is expected to return {F.results[i]} but returns {type(x[i])}"
+				return f"function is expected to return {F.results[i]} but returns (type={type(x[i])}, value={x})"
 		wasmStack[-1].extend(x)
 		return ""
 	
@@ -160,7 +169,7 @@ def wasmEvalAssert(ast):
 			wasmPozEval.pop()
 			wasmPozEval[-1]+=1
 			if x!="":
-				return "assert fail because of "+x
+				return "assert fail because of "+str(x)
 		else:
 			return f"assert fail because expected expresion after assert_return"
 		wasmStack.append([])
@@ -170,7 +179,7 @@ def wasmEvalAssert(ast):
 				x=wasmEval(ast.children[i])
 				wasmPozEval.pop()
 				if x!="":
-					return "assert fail because of "+x
+					return "assert fail because of "+str(x)
 			else:
 				return "assert fail because expected expresion after assert_return"
 		wasmPozEval[-1]=len(ast.children)
@@ -203,6 +212,22 @@ def wasmEvalAssert(ast):
 	
 	return ast.children[wasmPozEval[-1]].token+" not implemented"
 
+#helper, spune ce tip de structura este ast-ul pentru if
+def wasmEvalIfHelper(ast):
+	if isinstance(ast, tokenizer.Token):
+		if ast.tokType=="alias":
+			return "ignore"
+		return f"unexpected {ast.token} after if"
+	if isinstance(ast.children[0], tokenizer.Token):
+		if ast.children[0].token=="then":
+			return "then"
+		if ast.children[0].token=="else":
+			return "else"
+		if ast.children[0].token=="result":
+			return "result"
+		return "conditie"
+	return f"unexpected {ast} after if"
+
 #interpreteaza if cu toate nebuniile lui
 def wasmEvalIf(ast):
 	#forma cea mai generala de if:
@@ -211,22 +236,6 @@ def wasmEvalIf(ast):
 	conditie=""
 	thenInstr=""
 	elseInstr=""
-	
-	#helper, spune ce tip de structura este ast-ul pentru if
-	def wasmEvalIfHelper(ast):
-		if isinstance(ast, tokenizer.Token):
-			if ast.tokType=="alias":
-				return "ignore"
-			return f"unexpected {ast.token} after if"
-		if isinstance(ast.children[0], tokenizer.Token):
-			if ast.children[0].token=="then":
-				return "then"
-			if ast.children[0].token=="else":
-				return "else"
-			if ast.children[0].token=="result":
-				return "result"
-			return "conditie"
-		return f"unexpected {ast} after if"
 	
 	#am trecut peste if deja
 	part=wasmEvalIfHelper(ast.children[wasmPozEval[-1]])
@@ -290,8 +299,92 @@ def wasmEvalIf(ast):
 	#returnez din if simplu deoarece se pune automat pe stiva
 	return ""
 
+#interpreteaza block
+def wasmEvalBlock(ast: AST.AST):
+	#sar de block
+	global wasmBlocksCount
+	wasmPozEval[-1]+=1
+	
+	if wasmPozEval[-1]>=len(ast.children):
+		return ""
+	
+	indexBlock=wasmBlocksCount
+	wasmBlocksCount+=1
+	myName=""
+	tipuriReturn=[]
+	
+	if isinstance(ast.children[wasmPozEval[-1]], tokenizer.Token):
+		if ast.children[wasmPozEval[-1]].tokType=="alias":
+			myName=ast.children[wasmPozEval[-1]].token
+			if myName in wasmBlockAlias:
+				return "block label already declared"
+			wasmBlockAlias[myName]=indexBlock
+			wasmPozEval[-1]+=1
+		else:
+			return "unexpected token "+ast.children[wasmPozEval[-1]].token
+	
+	wasmStack.append([])
+	
+	if wasmPozEval[-1]<len(ast.children):
+		rezultat=wasmEvalIfHelper(ast.children[wasmPozEval[-1]])
+		if rezultat=="result":
+			for i in range(1, len(ast.children[wasmPozEval[-1]].children)):
+				tipuriReturn.append(tipuriDate[ast.children[wasmPozEval[-1]].children[i].token])
+			wasmPozEval[-1]+=1
+	
+	while wasmPozEval[-1]<len(ast.children):
+		#conventia este ca daca trebuie sa ma intorc dintr-un block o sa am un tuplu: ("skip to block index", index_block, rezultat_block_branching)
+		error=wasmEval(ast)
+		if error!="":
+			if isinstance(error, tuple):
+				if error[0]=="skip to block index":
+					if error[1]<indexBlock:
+						#trecem peste cateva block-uri, ai grija sa faci cleanup
+						if myName!="":
+							del wasmBlockAlias[myName]
+						wasmStack.pop()
+						wasmBlocksCount-=1
+						return error
+					else:
+						#sunt block-ul din care se vrea iesirea
+						if myName!="":
+							del wasmBlockAlias[myName]
+						wasmStack.pop()
+						wasmStack[-1]=error[2]
+						wasmBlocksCount-=1
+						wasmPozEval[-1]=len(ast.children)
+						return ""
+				else:
+					if myName!="":
+						del wasmBlockAlias[myName]
+					wasmStack.pop()
+					wasmBlocksCount-=1
+					return error
+				
+			else:
+				wasmStack.pop()
+				if myName!="":
+					del wasmBlockAlias[myName]
+				wasmBlocksCount-=1
+				return error
+	
+	x=wasmStack.pop()
+	if len(x)!=len(tipuriReturn):
+		wasmBlocksCount-=1
+		return f"expected {len(tipuriReturn)} returns from block got {len(x)}"
+	for i in range(len(x)):
+		if type(x[i])!=tipuriReturn[i]:
+			wasmBlocksCount-=1
+			return f"block is meant to return {tipuriReturn[i]} as it's {i}-th return but returns (type={type(x)}, value={x})"
+	wasmStack[-1].extend(x)
+	if myName!="":
+		del wasmBlockAlias[myName]
+	wasmBlocksCount-=1
+	return ""
+
 #keywords
 def wasmEvalKeyword(ast):
+	global wasmStack
 	t=ast.children[wasmPozEval[-1]]
 	wasmPozEval[-1]+=1
 	
@@ -504,12 +597,105 @@ def wasmEvalKeyword(ast):
 			wasmPush(y)
 		return ""
 	
-	#ASTA TREBUIE SCOS INAINTE SA TRIMITEM PROIECTUL
+	if t.token=="return":
+		wasmStack.append([])
+		while wasmPozEval[-1]<len(ast.children):
+			error=wasmEval(ast)
+			if error!="":
+				wasmStack.pop()
+				return error
+		return ("return from function", wasmStack.pop())
+	
+	if t.token=="br":
+		if not isinstance(ast.children[wasmPozEval[-1]], tokenizer.Token):
+			return "unspecified label or index for br"
+		if ast.children[wasmPozEval[-1]].tokType=="alias":
+			brName=ast.children[wasmPozEval[-1]].token
+			if brName in wasmBlockAlias:
+				brIndex=wasmBlockAlias[brName]
+			else:
+				return "unknown label"
+		elif ast.children[wasmPozEval[-1]].tokType=="number":
+			brIndex=wasmTokenToNumber(ast.children[wasmPozEval[-1]])
+		else:
+			return "unspecified label or index for branch"
+		wasmPozEval[-1]+=1
+		
+		#evaluare rezultat
+		while wasmPozEval[-1]<len(ast.children):
+			error=wasmEval(ast)
+			if error!="":
+				return error
+		
+		x=wasmStack[-1]
+		return ("skip to block index", brIndex, x)
+	
+	if t.token=="br_if":
+		if not isinstance(ast.children[wasmPozEval[-1]], tokenizer.Token):
+			return "unspecified label or index for branch"
+		if ast.children[wasmPozEval[-1]].tokType=="alias":
+			brName=ast.children[wasmPozEval[-1]].token
+			if brName in wasmBlockAlias:
+				brIndex=wasmBlockAlias[brName]
+			else:
+				return "unknown label"
+		elif ast.children[wasmPozEval[-1]].tokType=="number":
+			brIndex=wasmTokenToNumber(ast.children[wasmPozEval[-1]])
+		else:
+			return "unspecified label or index for br_if"
+		wasmPozEval[-1]+=1
+		
+		#evaluare rezultat
+		cntRez=0
+		while wasmPozEval[-1]<len(ast.children):
+			error=wasmEval(ast)
+			cntRez+=1
+			if error!="":
+				return error
+		
+		x=wasmPop()
+		if x=="type mismatch":
+			return x
+		if x._val:
+			return ("skip to block index", brIndex, wasmStack[-1])
+		for _ in range(cntRez-1):
+			wasmPop()
+		return ""
+	
+	if t.token=="br_table":
+		if not isinstance(ast.children[wasmPozEval[-1]], tokenizer.Token):
+			return "unspecified label or index for br_table"
+		brIndices=[]
+		while wasmPozEval[-1]<len(ast.children) and isinstance(ast.children[wasmPozEval[-1]], tokenizer.Token) and ast.children[wasmPozEval[-1]].tokType in {"alias", "number"}:
+			if ast.children[wasmPozEval[-1]].tokType=="number":
+				brIndices.append(wasmTokenToNumber(ast.children[wasmPozEval[-1]]))
+			else:
+				if ast.children[wasmPozEval[-1]].token in wasmBlockAlias:
+					brIndices.append(wasmBlockAlias[ast.children[wasmPozEval[-1]].token])
+				else:
+					return "unknown label"
+			wasmPozEval[-1]+=1
+		if not len(brIndices):
+			return "unspecified label or index for br_table"
+		
+		#evaluare rezultat
+		while wasmPozEval[-1]<len(ast.children):
+			error=wasmEval(ast)
+			if error!="":
+				return error
+		
+		x=wasmPop()
+		if x=="type mismatch":
+			return x
+		if -1<x._val<len(brIndices):
+			return ("skip to block index", brIndices[x._val], wasmStack[-1])
+		return ("skip to block index", brIndices[-1], wasmStack[-1])
+	
+	#operatii de debug si ajutor pentru debug; se pot scoate la cerere
 	if t.token=="print":
 		wasmLogStack()
 		return ""
 	
-	global wasmStack
 	if t.token=="fulldrop":
 		wasmStack=[]
 		return ""
@@ -545,6 +731,11 @@ def wasmEval(ast):
 				if ans!="":
 					return ans
 			
+			elif t.tokType=="block":
+				ans=wasmEvalBlock(ast)
+				if ans!="":
+					return ans
+			
 			else:
 				print(f"skipped {t.token} cannot interpret it")
 				wasmPozEval[-1]+=1
@@ -572,3 +763,5 @@ def interpret(code):
 	ans=wasmEval(A)
 	if ans!="":
 		print(ans)
+	else:
+		print("smooth sailing")

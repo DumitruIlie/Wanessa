@@ -21,12 +21,12 @@ altfel, valoarea inca se mentine pe stiva programului si ar trebui dropata
 Done:
 avem lipsuri in cod care nu imi dau seama ce reprezinta. I THINK IS FIXED
 termina de interpretat if. I THINK IS FIXED
+va trebui sa te apuci sa limitezi scope-ul din stiva pe care il au anumite instructiuni, de ex intr-un block nu se pot accesa valori ce au fost puse pe stiva inainte de block. ;; cred ca daca adaug o noua lista in stiva programului nu va fi mare problema.
+improve the speed at which the interpretor finds the closing paranthesis (O(N^2)->O(N))
 
 TO DO:
-what is call_indirect, table, funcref, elem, global, mut, type, unreachable
+what is call_indirect, table, funcref, elem, global, mut, type, unreachable - cred ca se pot ignora
 de interpretat/gasit_workaround-uri loop, block, return si altele
-va trebui sa te apuci sa limitezi scope-ul din stiva pe care il au anumite instructiuni, de ex intr-un block nu se pot accesa valori ce au fost puse pe stiva inainte de block. ;; cred ca daca adaug o noua lista in stiva programului nu va fi mare problema.
 de facut assert-urile sa functioneze ;; cum trebuie si sa fie toate
 simd
 switch
-improve the speed at which the interpretor finds the closing paranthesis

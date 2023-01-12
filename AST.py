@@ -12,7 +12,7 @@ class AST:
 			if self.assertError!="":
 				return self.assertError
 			return "Not correct"
-		return '\t'*indentCnt+'(\n'+"\n".join([(x.myStr(indentCnt+1) if isinstance(x, AST) else ('\t'*(indentCnt+1))+str(x)) for x in self.children])+'\n'+'\t'*indentCnt+')'
+		return ' '*indentCnt+'(\n'+"\n".join([(x.myStr(indentCnt+1) if isinstance(x, AST) else (' '*(indentCnt+1))+str(x)) for x in self.children])+'\n'+' '*indentCnt+')'
 	
 	def __str__(self):
 		return self.myStr(0)

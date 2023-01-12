@@ -55,6 +55,7 @@ def listaTipuriTokene():
 			"i32.popcnt":"keyword",\
 			"i32.extend8_s":"keyword",\
 			"i32.extend16_s":"keyword",\
+			"i32.wrap_i64":"keyword",\
 			"i32.eqz":"keyword",\
 			"i32.eq":"keyword",\
 			"i32.ne":"keyword",\
@@ -107,21 +108,22 @@ def listaTipuriTokene():
 			"assert_trap":"assert",\
 			
 			#working on
-			"assert_invalid":"assert",\
-			"assert_malformed":"assert",\
+			"block":"block",\
+			"br":"keyword",\
+			"br_if":"keyword",\
+			"br_table":"keyword",\
+			"return":"keyword",\
 			
 			#to do
+			"assert_invalid":"assert",\
+			"assert_malformed":"assert",\
 			
 			#workaround
 			"nan:canonical":"unexpected token",\
 			"nan:arithmetic":"unexpected token",\
-			"return":"ignored",\
 			
 			#to find workaround
-			"loop":"ignored",\
-			"br":"ignored",\
-			"br_if":"ignored",\
-			"br_table":"ignored",\
+			"loop":"block",\
 			"memory":"ignored",\
 			
 			#debug, pot fi sterse complet(preferabil totusi sa fie pastrate)
