@@ -1,8 +1,13 @@
 import tokenizer
 import wasmFunc
 import AST
+import i8
+import i16
 import i32
 import i64
+import i16x8
+import f32
+import v128
 
 wasmStack=[]
 variabileLocale=[]
@@ -21,7 +26,8 @@ functiiBaza={"i32.add":i32.i32.add, "i32.sub":i32.i32.sub, "i32.mul":i32.i32.mul
 			 "i64.add":i64.i64.add, "i64.sub":i64.i64.sub, "i64.mul":i64.i64.mul, "i64.div_s":i64.i64.div_s, "i64.div_u":i64.i64.div_u, "i64.rem_s":i64.i64.rem_s, "i64.rem_u":i64.i64.rem_u, "i64.and":i64.i64._and, "i64.or":i64.i64._or, "i64.xor":i64.i64._xor, "i64.shl":i64.i64.shl, "i64.shr_s":i64.i64.shr_s, "i64.shr_u":i64.i64.shr_u, "i64.rotl":i64.i64.rotl, "i64.rotr":i64.i64.rotr,\
 			 "i64.clz":i64.i64.clz, "i64.ctz":i64.i64.ctz, "i64.popcnt":i64.i64.popcnt, "i64.extend8_s":i64.i64.extend8_s, "i64.extend16_s":i64.i64.extend16_s, "i64.eqz":i64.i64.eqz, "i64.eq":i64.i64.eq, "i64.ne":i64.i64.ne, "i64.lt_s":i64.i64.lt_s, "i64.lt_u":i64.i64.lt_u, "i64.le_s":i64.i64.le_s, "i64.le_u":i64.i64.le_u, "i64.gt_s":i64.i64.gt_s, "i64.gt_u":i64.i64.gt_u, "i64.ge_s":i64.i64.ge_s, "i64.ge_u":i64.i64.ge_u,\
 			 "i64.extend32_s":i64.i64.extend32_s}
-tipuriDate={"i32":i32.i32, "i64":i64.i64}#, "f32":f32.f32}
+simdFuncs={"i16x8.extadd_pairwise_i8x16_s":i16x8.i16x8.extadd_pairwise_i8x16_s, "i16x8.extadd_pairwise_i8x16_u":i16x8.i16x8.extadd_pairwise_i8x16_u}
+tipuriDate={"i32":i32.i32, "i64":i64.i64, "v128":v128.v128, "f32":f32.f32}
 
 #initializeaza interpretorul
 def initWasm():
@@ -188,8 +194,16 @@ def wasmEvalAssert(ast):
 		if len(x)!=len(y):
 			return f"assert fail because expected {len(y)} values but only got {len(x)} values"
 		for i in range(len(x)):
-			if type(x[i])!=type(y[i]) or x[i]._val!=y[i]._val:
-				return f"assert fail because {i}-th values differ ({type(x[i])}, {x[i]._val}) != ({type(y[i])}, {y[i]._val})"
+			if type(x[i])!=type(y[i]):
+				return f"assert fail because {i}-th values differ in type: ({type(x[i])}, {x[i]}) != ({type(y[i])}, {y[i]})"
+			if isinstance(x[i], v128.v128):
+				if len(x[i]._val)!=len(y[i]._val):
+					return f"assert fail because {i}-th values have different length"
+				for j in range(len(x[i]._val)):
+					if type(x[i]._val[j])!=type(y[i]._val[j]) or x[i]._val[j]._val!=y[i]._val[j]._val:
+						return f"assert fail because {i}-th value (simd vector) differs at {j}-th position: ({type(x[i]._val[j])}, {x[i]._val[j]}) != ({type(y[i]._val[j])}, {y[i]._val[j]})"
+			elif x[i]._val!=y[i]._val:
+				return f"assert fail because {i}-th values differ: ({type(x[i])}, {x[i]}) != ({type(y[i])}, {y[i]})"
 		return "ok"
 	
 	if ast.children[wasmPozEval[-1]].token=="assert_invalid" or ast.children[wasmPozEval[-1]].token=="assert_trap":
@@ -512,6 +526,33 @@ def wasmEvalKeyword(ast):
 		wasmPozEval[-1]+=1
 		return ""
 	
+	if t.token=="v128.const":
+		if ast.children[wasmPozEval[-1]].token=="i16x8":
+			#read 8 values
+			wasmPozEval[-1]+=1
+			l=[]
+			for _ in range(8):
+				x=wasmTokenToNumber(ast.children[wasmPozEval[-1]])
+				if not isinstance(x, int):
+					return x
+				l.append(i16.i16(x))
+				wasmPozEval[-1]+=1
+			wasmPush(v128.v128(l))
+			return ""
+		if ast.children[wasmPozEval[-1]].token=="i8x16":
+			#read 16 values
+			wasmPozEval[-1]+=1
+			l=[]
+			for _ in range(16):
+				x=wasmTokenToNumber(ast.children[wasmPozEval[-1]])
+				if not isinstance(x, int):
+					return x
+				l.append(i8.i8(x))
+				wasmPozEval[-1]+=1
+			wasmPush(v128.v128(l))
+			return ""
+		return "expected simd type for vector"
+	
 	if t.token in functiiBaza:
 		#o functie aplicata pe i32 sau i64
 		if isinstance(ast.children[wasmPozEval[-1]], AST.AST):
@@ -554,6 +595,16 @@ def wasmEvalKeyword(ast):
 		if ans=="TYPE MISMATCH":
 			return "\"type mismatch\""
 		wasmPush(ans)
+		return ""
+	
+	if t.token in simdFuncs:
+		error=wasmEval(ast)
+		if error!="":
+			return error
+		v=wasmPop()
+		if v=="type mismatch":
+			return v
+		wasmPush(simdFuncs[t.token](v))
 		return ""
 	
 	if t.token=="if":

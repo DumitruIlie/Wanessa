@@ -1,6 +1,6 @@
 def listaTipuriTokene():
 	return {
-			#i think this is done
+			#i think these are done
 			
 			#if
 			"if":"keyword",\
@@ -12,6 +12,8 @@ def listaTipuriTokene():
 			"i32":"data type",\
 			"i64":"data type",\
 			"f32":"data type",\
+			"i16x8":"data type",\
+			"i8x16":"data type",\
 			
 			#syntax
 			"(":"start",\
@@ -102,6 +104,11 @@ def listaTipuriTokene():
 			"i64.gt_u":"keyword",\
 			"i64.ge_s":"keyword",\
 			"i64.ge_u":"keyword",\
+			
+			#simd operations
+			"v128.const":"keyword",\
+			"i16x8.extadd_pairwise_i8x16_u":"keyword",\
+			"i16x8.extadd_pairwise_i8x16_s":"keyword",\
 			
 			#asserts
 			"assert_return":"assert",\
