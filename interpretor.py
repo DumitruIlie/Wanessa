@@ -224,7 +224,45 @@ def wasmEvalAssert(ast):
 		#assert-ul merge perfect
 		return "ok"
 	
-	return ast.children[wasmPozEval[-1]].token+" not implemented"
+	if ast.children[wasmPozEval[-1]].token=="assert_malformed": # verificam daca ceea ce e pus intre ghilimele in modulul cu quote e ok
+		#	--- unul dintre cazuri e urmatorul:
+		#
+		#	(assert_malformed 
+		#		(module quote 
+		#			"ceva cod"
+		#			"alt cod"
+		#			"etc"
+		#			"etc bis"
+		#		)
+		# 		"unexpected token"
+		#	)
+		# 
+		# date fiind formularile din fisiere, plecam de la presupunerea ca singurele noduri urmase in contextul asta sunt nodul cu modulul urmator si token-ul cu eroarea (in ordinea asta)
+		# 
+		# cazul in care avem "inline function type" poate fi tratat doar dupa implementarea unei tabele pentru tinerea evidentei de signaturi pentru functii
+		print(ast.children)
+		codNou = ""
+		for x in ast.children:
+			if isinstance(x, AST.AST):
+				codNou = getCodeFromQuoteModule(x)
+				break # are sens existenta unui singur nod de ast
+		print(codNou)
+		# codul nou reprezinta echivalentul a ceea ce am in nodul de "module quote"
+		# il interpretam folosind aceeasi logica din main
+		codNou = codNou.splitlines()
+		codNou = tokenizer.reformat(codNou)
+		codEroare = interpret(codNou)
+		print(codEroare)
+
+		print("a gasit assert-ul")
+		wasmPozEval[-1] += 1
+		return "ok"
+
+	return ast.children.token+" not implemented"
+
+def getCodeFromQuoteModule(ast : AST.AST): # dat fiind un nod de ast, functia returneaza concatenarea token-urilor (cu endline-uri) urmase ale nodului respectiv intr-un bloc de tip modul
+	return  "(module\n" + "\n".join([ x.token[1:-1] for x in ast.children if isinstance(x, tokenizer.Token) and x.token[0] == '"']) + "\n)\n"
+
 
 #helper, spune ce tip de structura este ast-ul pentru if
 def wasmEvalIfHelper(ast):
@@ -276,7 +314,7 @@ def wasmEvalIf(ast):
 		elseInstr=ast.children[wasmPozEval[-1]]
 		wasmPozEval[-1]+=1
 		part="done"
-	
+
 	if part!="done":
 		if part[:10]=="unexpected":
 			return part
