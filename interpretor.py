@@ -1,3 +1,4 @@
+import sys
 import tokenizer
 import wasmFunc
 import AST
@@ -38,6 +39,7 @@ def initWasm():
 	wasmPozEval=[0]
 	wasmBlockAlias=dict()
 	wasmBlocksCount=0
+	sys.setrecursionlimit(10**5)
 
 #functie de test, ajuta la debug, TREBUIE NEAPARAT STEARSA INAINTE SA TRIMITEM PROIECTUL
 def wasmLogStack():
