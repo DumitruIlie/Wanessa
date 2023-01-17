@@ -1,4 +1,4 @@
-import interpretor
+import Interpretor
 import tokenizer
 import AST
 
@@ -7,7 +7,7 @@ def main():
 	interpretedFile=open(interpretedFileName)
 	code=interpretedFile.readlines()
 	code=tokenizer.reformat(code)
-	interpretor.interpret(code)
+	Interpretor.interpret(code)
 
 if __name__=="__main__":
 	main()
