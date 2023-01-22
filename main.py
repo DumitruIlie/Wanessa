@@ -1,13 +1,15 @@
 import Interpretor
-import tokenizer
-import AST
+import sys
 
 def main():
-	interpretedFileName=input("the file to interpret: ")
-	interpretedFile=open(interpretedFileName)
-	code=interpretedFile.readlines()
-	code=tokenizer.reformat(code)
-	Interpretor.interpret(code)
+	argv=sys.argv
+	argc=len(argv)
+	
+	if argc==1:
+		interpretedFileName=input("the file to interpret: ")
+		Interpretor.interpretMultipleFiles([interpretedFileName])
+	else:
+		Interpretor.interpretMultipleFiles(argv[1:])
 
 if __name__=="__main__":
 	main()

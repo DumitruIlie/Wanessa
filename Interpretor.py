@@ -10,18 +10,19 @@ import i16x8
 import f32
 import v128
 
-aritateFunctii={"i32.add":2, "i32.sub":2, "i32.mul":2, "i32.div_s":2, "i32.div_u":2, "i32.rem_s":2, "i32.rem_u":2, "i32.and":2, "i32.or":2, "i32.xor":2, "i32.shl":2, "i32.shr_s":2, "i32.shr_u":2, "i32.rotl":2, "i32.rotr":2,\
+#date importante globale, nu are sens sa le stocam altundeva
+wasmAritateFunctii={"i32.add":2, "i32.sub":2, "i32.mul":2, "i32.div_s":2, "i32.div_u":2, "i32.rem_s":2, "i32.rem_u":2, "i32.and":2, "i32.or":2, "i32.xor":2, "i32.shl":2, "i32.shr_s":2, "i32.shr_u":2, "i32.rotl":2, "i32.rotr":2,\
 				"i32.clz":1, "i32.ctz":1, "i32.popcnt":1, "i32.extend8_s":1, "i32.extend16_s":1, "i32.wrap_i64":1, "i32.eqz":1, "i32.eq":2, "i32.ne":2, "i32.lt_s":2, "i32.lt_u":2, "i32.le_s":2, "i32.le_u":2, "i32.gt_s":2, "i32.gt_u":2, "i32.ge_s":2, "i32.ge_u":2,\
 				"i64.add":2, "i64.sub":2, "i64.mul":2, "i64.div_s":2, "i64.div_u":2, "i64.rem_s":2, "i64.rem_u":2, "i64.and":2, "i64.or":2, "i64.xor":2, "i64.shl":2, "i64.shr_s":2, "i64.shr_u":2, "i64.rotl":2, "i64.rotr":2,\
 				"i64.clz":1, "i64.ctz":1, "i64.popcnt":1, "i64.extend8_s":1, "i64.extend16_s":1, "i64.eqz":1, "i64.eq":2, "i64.ne":2, "i64.lt_s":2, "i64.lt_u":2, "i64.le_s":2, "i64.le_u":2, "i64.gt_s":2, "i64.gt_u":2, "i64.ge_s":2, "i64.ge_u":2,\
 				"i64.extend32_s":1}
-functiiBaza={"i32.add":i32.i32.add, "i32.sub":i32.i32.sub, "i32.mul":i32.i32.mul, "i32.div_s":i32.i32.div_s, "i32.div_u":i32.i32.div_u, "i32.rem_s":i32.i32.rem_s, "i32.rem_u":i32.i32.rem_u, "i32.and":i32.i32._and, "i32.or":i32.i32._or, "i32.xor":i32.i32._xor, "i32.shl":i32.i32.shl, "i32.shr_s":i32.i32.shr_s, "i32.shr_u":i32.i32.shr_u, "i32.rotl":i32.i32.rotl, "i32.rotr":i32.i32.rotr,\
+wasmFunctiiBaza={"i32.add":i32.i32.add, "i32.sub":i32.i32.sub, "i32.mul":i32.i32.mul, "i32.div_s":i32.i32.div_s, "i32.div_u":i32.i32.div_u, "i32.rem_s":i32.i32.rem_s, "i32.rem_u":i32.i32.rem_u, "i32.and":i32.i32._and, "i32.or":i32.i32._or, "i32.xor":i32.i32._xor, "i32.shl":i32.i32.shl, "i32.shr_s":i32.i32.shr_s, "i32.shr_u":i32.i32.shr_u, "i32.rotl":i32.i32.rotl, "i32.rotr":i32.i32.rotr,\
 			 "i32.clz":i32.i32.clz, "i32.ctz":i32.i32.ctz, "i32.popcnt":i32.i32.popcnt, "i32.extend8_s":i32.i32.extend8_s, "i32.extend16_s":i32.i32.extend16_s, "i32.wrap_i64":i32.i32.wrap_i64, "i32.eqz":i32.i32.eqz, "i32.eq":i32.i32.eq, "i32.ne":i32.i32.ne, "i32.lt_s":i32.i32.lt_s, "i32.lt_u":i32.i32.lt_u, "i32.le_s":i32.i32.le_s, "i32.le_u":i32.i32.le_u, "i32.gt_s":i32.i32.gt_s, "i32.gt_u":i32.i32.gt_u, "i32.ge_s":i32.i32.ge_s, "i32.ge_u":i32.i32.ge_u,\
 			 "i64.add":i64.i64.add, "i64.sub":i64.i64.sub, "i64.mul":i64.i64.mul, "i64.div_s":i64.i64.div_s, "i64.div_u":i64.i64.div_u, "i64.rem_s":i64.i64.rem_s, "i64.rem_u":i64.i64.rem_u, "i64.and":i64.i64._and, "i64.or":i64.i64._or, "i64.xor":i64.i64._xor, "i64.shl":i64.i64.shl, "i64.shr_s":i64.i64.shr_s, "i64.shr_u":i64.i64.shr_u, "i64.rotl":i64.i64.rotl, "i64.rotr":i64.i64.rotr,\
 			 "i64.clz":i64.i64.clz, "i64.ctz":i64.i64.ctz, "i64.popcnt":i64.i64.popcnt, "i64.extend8_s":i64.i64.extend8_s, "i64.extend16_s":i64.i64.extend16_s, "i64.eqz":i64.i64.eqz, "i64.eq":i64.i64.eq, "i64.ne":i64.i64.ne, "i64.lt_s":i64.i64.lt_s, "i64.lt_u":i64.i64.lt_u, "i64.le_s":i64.i64.le_s, "i64.le_u":i64.i64.le_u, "i64.gt_s":i64.i64.gt_s, "i64.gt_u":i64.i64.gt_u, "i64.ge_s":i64.i64.ge_s, "i64.ge_u":i64.i64.ge_u,\
 			 "i64.extend32_s":i64.i64.extend32_s}
-simdFuncs={"i16x8.extadd_pairwise_i8x16_s":i16x8.i16x8.extadd_pairwise_i8x16_s, "i16x8.extadd_pairwise_i8x16_u":i16x8.i16x8.extadd_pairwise_i8x16_u}
-tipuriDate={"i32":i32.i32, "i64":i64.i64, "v128":v128.v128, "f32":f32.f32}
+wasmSimdFuncs={"i16x8.extadd_pairwise_i8x16_s":i16x8.i16x8.extadd_pairwise_i8x16_s, "i16x8.extadd_pairwise_i8x16_u":i16x8.i16x8.extadd_pairwise_i8x16_u}
+wasmDataTypes={"i32":i32.i32, "i64":i64.i64, "v128":v128.v128, "f32":f32.f32}
 
 
 class Interpretor:
@@ -32,7 +33,7 @@ class Interpretor:
 		self.wasmPozEval=[0]
 		self.wasmBlockAlias=dict()
 		self.wasmBlocksCount=0
-		self.tipuriDateVariabileLocale=[]
+		self.wasmDataTypesVariabileLocale=[]
 		sys.setrecursionlimit(10**5)
 
 	#functie de test, ajuta la debug, TREBUIE NEAPARAT STEARSA INAINTE SA TRIMITEM PROIECTUL
@@ -107,7 +108,7 @@ class Interpretor:
 		locVarTypes=[]
 		
 		while len(locVar)<len(F.paramTypes):
-			retType=tipuriDate[F.paramTypes[len(locVar)]]
+			retType=wasmDataTypes[F.paramTypes[len(locVar)]]
 			
 			if isinstance(ast.children[self.wasmPozEval[-1]], AST.AST):
 				self.wasmPozEval.append(0)
@@ -127,17 +128,17 @@ class Interpretor:
 			locVarTypes.append(retType)
 		
 		for x in F.localTypes:
-			locVar.append(tipuriDate[x](0))
-			locVarTypes.append(tipuriDate[x])
+			locVar.append(wasmDataTypes[x](0))
+			locVarTypes.append(wasmDataTypes[x])
 		
 		if isinstance(F.AST, AST.AST):
 			self.variabileLocale.append(locVar)
-			self.tipuriDateVariabileLocale.append(locVarTypes)
+			self.wasmDataTypesVariabileLocale.append(locVarTypes)
 			self.wasmStack.append([])
 			self.wasmPozEval.append(0)
 			error=self.wasmEval(F.AST)
 			self.wasmPozEval.pop()
-			self.tipuriDateVariabileLocale.pop()
+			self.wasmDataTypesVariabileLocale.pop()
 			self.variabileLocale.pop()
 			x=self.wasmStack.pop()
 			if error!="":
@@ -149,7 +150,7 @@ class Interpretor:
 			if len(F.results)!=(l:=len(x)):
 				return f"function is expected to return {len(F.results)} values but returns {l}"
 			for i in range(l):
-				if tipuriDate[F.results[i]]!=type(x[i]):
+				if wasmDataTypes[F.results[i]]!=type(x[i]):
 					return f"function is expected to return {F.results[i]} but returns (type={type(x[i])}, value={x})"
 			self.wasmStack[-1].extend(x)
 			return ""
@@ -291,7 +292,7 @@ class Interpretor:
 			part=Interpretor.wasmEvalIfHelper(ast.children[self.wasmPozEval[-1]])
 		if part=="result":
 			for i in range(1, len(ast.children[self.wasmPozEval[-1]].children)):
-				resultType.append(tipuriDate[ast.children[self.wasmPozEval[-1]].children[i].token])
+				resultType.append(wasmDataTypes[ast.children[self.wasmPozEval[-1]].children[i].token])
 			self.wasmPozEval[-1]+=1
 			part=Interpretor.wasmEvalIfHelper(ast.children[self.wasmPozEval[-1]])
 		if part=="conditie":
@@ -375,7 +376,7 @@ class Interpretor:
 			rezultat=Interpretor.wasmEvalIfHelper(ast.children[self.wasmPozEval[-1]])
 			if rezultat=="result":
 				for i in range(1, len(ast.children[self.wasmPozEval[-1]].children)):
-					tipuriReturn.append(tipuriDate[ast.children[self.wasmPozEval[-1]].children[i].token])
+					tipuriReturn.append(wasmDataTypes[ast.children[self.wasmPozEval[-1]].children[i].token])
 				self.wasmPozEval[-1]+=1
 		
 		while self.wasmPozEval[-1]<len(ast.children):
@@ -467,7 +468,7 @@ class Interpretor:
 			if len(ast.children)==self.wasmPozEval[-1]:
 				#setam variabila la valoarea de pe stiva
 				x=self.wasmPop()
-				if isinstance(x, self.tipuriDateVariabileLocale[-1][i]):
+				if isinstance(x, self.wasmDataTypesVariabileLocale[-1][i]):
 					self.variabileLocale[-1][i]=x
 					return ""
 				return "type mismatch"
@@ -481,7 +482,7 @@ class Interpretor:
 			x=self.wasmPop()
 			if error!="":
 				return error
-			if self.tipuriDateVariabileLocale[-1][i]!=type(x):
+			if self.wasmDataTypesVariabileLocale[-1][i]!=type(x):
 				return "type mismatch"
 			self.variabileLocale[-1][i]=x
 			self.wasmPush(x)
@@ -496,7 +497,7 @@ class Interpretor:
 			if len(ast.children)==self.wasmPozEval[-1]:
 				#setam variabila la valoarea de pe stiva
 				x=self.wasmPop()
-				if isinstance(x, self.tipuriDateVariabileLocale[-1][i]):
+				if isinstance(x, self.wasmDataTypesVariabileLocale[-1][i]):
 					self.variabileLocale[-1][i]=x
 					return ""
 				return "type mismatch"
@@ -510,7 +511,7 @@ class Interpretor:
 			x=self.wasmPop()
 			if error!="":
 				return error
-			if self.tipuriDateVariabileLocale[-1][i]!=type(x):
+			if self.wasmDataTypesVariabileLocale[-1][i]!=type(x):
 				return "type mismatch"
 			self.variabileLocale[-1][i]=x
 			return ""
@@ -584,7 +585,7 @@ class Interpretor:
 				return ""
 			return "expected simd type for vector"
 		
-		if t.token in functiiBaza:
+		if t.token in wasmFunctiiBaza:
 			#o functie aplicata pe i32 sau i64
 			if isinstance(ast.children[self.wasmPozEval[-1]], AST.AST):
 				self.wasmPozEval.append(0)
@@ -599,7 +600,7 @@ class Interpretor:
 			if x=="type mismatch":
 				return x
 			
-			if aritateFunctii[t.token]==2:
+			if wasmAritateFunctii[t.token]==2:
 				if isinstance(ast.children[self.wasmPozEval[-1]], AST.AST):
 					self.wasmPozEval.append(0)
 					y=self.wasmEvalNumber(ast.children[self.wasmPozEval[-2]])
@@ -612,7 +613,7 @@ class Interpretor:
 				y=self.wasmPop()
 				if y=="\"type mismatch\"":
 					return y
-				ans=functiiBaza[t.token](x, y)
+				ans=wasmFunctiiBaza[t.token](x, y)
 				
 				if ans=="TYPE MISMATCH":
 					return "\"type mismatch\""
@@ -622,20 +623,20 @@ class Interpretor:
 					return "\"integer overflow\""
 				self.wasmPush(ans)
 				return ""
-			ans=functiiBaza[t.token](x)
+			ans=wasmFunctiiBaza[t.token](x)
 			if ans=="TYPE MISMATCH":
 				return "\"type mismatch\""
 			self.wasmPush(ans)
 			return ""
 		
-		if t.token in simdFuncs:
+		if t.token in wasmSimdFuncs:
 			error=self.wasmEval(ast)
 			if error!="":
 				return error
 			v=self.wasmPop()
 			if v=="type mismatch":
 				return v
-			self.wasmPush(simdFuncs[t.token](v))
+			self.wasmPush(wasmSimdFuncs[t.token](v))
 			return ""
 		
 		if t.token=="if":
@@ -845,5 +846,31 @@ def interpret(code, printExecutionEnd=True):
 	ans=interpretor.wasmEval(A)
 	if ans!="":
 		print(ans)
-	elif printExecutionEnd:
+		return ans
+	if printExecutionEnd:
 		print("smooth sailing")
+	return ""
+
+def interpretMultipleFiles(fisiere, printExecutionEnd=True):
+	ASTs=[]
+	for i in range(len(fisiere)):
+		f=open(fisiere[i])
+		code=tokenizer.reformat(f.readlines())
+		T=tokenizer.Tokenizer(code)
+		A=AST.makeAST(T.tokens)
+		if not isinstance(A, AST.AST):
+			print("code cannot be interpreted because "+A)
+			return A
+		if not A.correct:
+			print("code returns error: "+A.assertError)
+			return A.assertError
+		ASTs.append(A)
+	interpretor=Interpretor()
+	for ast in ASTs:
+		ans=interpretor.wasmEval(ast)
+		if ans!="":
+			print(ast)
+			return ans
+	if printExecutionEnd:
+		print("smooth sailing")
+	return ""
