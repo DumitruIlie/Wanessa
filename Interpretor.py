@@ -1,5 +1,6 @@
 import sys
 import tokenizer
+import ASTChecker
 import wasmFunc
 import AST
 import i8
@@ -78,30 +79,14 @@ class Interpretor:
 		return "unknown operator"
 
 	#transforma un token intr-un numar (int)
+	
 	def wasmTokenToNumber(t):
-		sign=1
-		t=t.token.replace('_', '')
-		if t[0]=='-':
-			sign=-1
-			t=t[1:]
-		elif t[0]=='+':
-			t=t[1:]
-		if len(t)<3:
-			#baza 10 sigur
-			return int(t)*sign
-		if t[1]=='x':
-			#baza 16
-			x=0
-			for i in range(2, len(t)):
-				if '0'<=t[i]<='9':
-					x=x*16+ord(t[i])-ord('0')
-				elif 'a'<=t[i]<='f':
-					x=x*16+10+ord(t[i])-ord('a')
-				elif 'A'<=t[i]<='F':
-					x=x*16+10+ord(t[i])-ord('A')
-			return x*sign
-		return int(t)*sign
-
+		t = t.token.replace('_', '')
+		if(t[1] == "x"):
+			return int(t, 16)
+		else:
+			return int(t)
+		
 	#functie pentru incarcat parametri si variabile locale + apel la functie
 	def wasmCallFunc(self, ast, F):
 		locVar=[]
@@ -237,23 +222,23 @@ class Interpretor:
 			# date fiind formularile din fisiere, plecam de la presupunerea ca singurele noduri urmase in contextul asta sunt nodul cu modulul urmator si token-ul cu eroarea (in ordinea asta)
 			# 
 			# cazul in care avem "inline function type" poate fi tratat doar dupa implementarea unei tabele pentru tinerea evidentei de signaturi pentru functii
-			print(ast.children)
 			codNou = ""
 			for x in ast.children:
 				if isinstance(x, AST.AST):
 					codNou = Interpretor.getCodeFromQuoteModule(x)
 					break # are sens existenta unui singur nod de ast
-			print(codNou)
+			
 			# codul nou reprezinta echivalentul a ceea ce am in nodul de "module quote"
 			# il interpretam folosind aceeasi logica din main
 			codNou = codNou.splitlines()
 			codNou = tokenizer.reformat(codNou)
+			
 			codEroare = interpret(codNou, printExecutionEnd=False)
-			print(codEroare)
-
-			print("a gasit assert-ul")
-			self.wasmPozEval[-1] += 1
-			return "ok"
+			self.wasmPozEval[-1] += 3
+			if codEroare == "unexpected token" or codEroare == "inline function type":
+				return "ok"
+				
+			return "assert not validated"
 		
 		return ast.children[self.wasmPozEval[-1]].token+" not implemented"
 
@@ -273,6 +258,8 @@ class Interpretor:
 				return "else"
 			if ast.children[0].token=="result":
 				return "result"
+			if ast.children[0].token == "param":
+				return f"unexpected {ast} after if" 
 			return "conditie"
 		return f"unexpected {ast} after if"
 
@@ -836,6 +823,12 @@ class Interpretor:
 def interpret(code, printExecutionEnd=True):
 	T=tokenizer.Tokenizer(code)
 	A=AST.makeAST(T.tokens)
+	errCode = ASTChecker.ASTChecker().checkAST(A)
+	if errCode != "seems fine":
+		print(errCode)
+		return errCode
+
+	
 	if not isinstance(A, AST.AST):
 		print("code cannot be interpreted because "+A)
 		return A
@@ -858,6 +851,11 @@ def interpretMultipleFiles(fisiere, printExecutionEnd=True):
 		code=tokenizer.reformat(f.readlines())
 		T=tokenizer.Tokenizer(code)
 		A=AST.makeAST(T.tokens)
+		errCode = ASTChecker.ASTChecker().checkAST(A)
+		if errCode != "seems fine":
+			print(errCode)
+			return errCode
+
 		if not isinstance(A, AST.AST):
 			print("code cannot be interpreted because "+A)
 			return A
@@ -867,9 +865,10 @@ def interpretMultipleFiles(fisiere, printExecutionEnd=True):
 		ASTs.append(A)
 	interpretor=Interpretor()
 	for ast in ASTs:
+		print(len(ASTs))
 		ans=interpretor.wasmEval(ast)
 		if ans!="":
-			print(ast)
+			print(ans)
 			return ans
 	if printExecutionEnd:
 		print("smooth sailing")
