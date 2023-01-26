@@ -865,7 +865,7 @@ def interpretMultipleFiles(fisiere, printExecutionEnd=True):
 		ASTs.append(A)
 	interpretor=Interpretor()
 	for ast in ASTs:
-		print(len(ASTs))
+		print(ast)
 		ans=interpretor.wasmEval(ast)
 		if ans!="":
 			print(ans)
