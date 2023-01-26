@@ -82,7 +82,7 @@ class Interpretor:
 	
 	def wasmTokenToNumber(t):
 		t = t.token.replace('_', '')
-		if(t[1] == "x"):
+		if (t[0] == "-" and len(t) >= 3 and t[2] == "x") or (t[0] != "-" and len(t) >= 2 and t[1] == "x"):
 			return int(t, 16)
 		else:
 			return int(t)
