@@ -37,12 +37,16 @@ class Interpretor:
 		self.wasmDataTypesVariabileLocale=[]
 		sys.setrecursionlimit(10**5)
 
-	#functie de test, ajuta la debug, TREBUIE NEAPARAT STEARSA INAINTE SA TRIMITEM PROIECTUL
+	#functie de test, ajuta la debug
 	def wasmLogStack(self):
 		print('[')
 		for i in range(len(self.wasmStack)):
 			print(' [', *self.wasmStack[i], ']')
 		print(']')
+	
+	#functie de test, ajuta la debug
+	def wasmLogStackLevel(self):
+		print(' [', *self.wasmStack[-1], ']')
 
 	#adauga pe stiva un element
 	def wasmPush(self, x):
@@ -761,7 +765,11 @@ class Interpretor:
 				return ("skip to block index", brIndices[x._val], self.wasmStack[-1])
 			return ("skip to block index", brIndices[-1], self.wasmStack[-1])
 		
-		#operatii de debug si ajutor pentru debug; se pot scoate la cerere
+		#operatii de debug si ajutor pentru debug; se pot scoate fara problema
+		if t.token=="print_level":
+			self.wasmLogStackLevel()
+			return ""
+		
 		if t.token=="print":
 			self.wasmLogStack()
 			return ""
@@ -865,7 +873,7 @@ def interpretMultipleFiles(fisiere, printExecutionEnd=True):
 		ASTs.append(A)
 	interpretor=Interpretor()
 	for ast in ASTs:
-		print(ast)
+		#print(ast)
 		ans=interpretor.wasmEval(ast)
 		if ans!="":
 			print(ans)

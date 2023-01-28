@@ -133,7 +133,8 @@ def listaTipuriTokene():
 			"loop":"block",\
 			"memory":"ignored",\
 			
-			#debug, pot fi sterse complet(preferabil totusi sa fie pastrate)
+			#debug, pot fi sterse complet(preferabil totusi sa fie pastrate pentru demonstratia de functionalitate)
+			"print_level":"keyword",\
 			"print":"keyword",\
 			"fulldrop":"keyword",\
 			"leveldrop":"keyword"\
