@@ -192,7 +192,7 @@ class Interpretor:
 					return f"assert fail because {i}-th values differ: ({type(x[i])}, {x[i]}) != ({type(y[i])}, {y[i]})"
 			return "ok"
 		
-		if ast.children[self.wasmPozEval[-1]].token=="assert_invalid" or ast.children[self.wasmPozEval[-1]].token=="assert_trap":
+		if ast.children[self.wasmPozEval[-1]].token=="assert_trap":
 			self.wasmPozEval[-1]+=1
 			#ne asteptam la o eroare, daca eroarea primita este cea la care ne asteptam, assert-ul trece, altfel pica
 			#dupa assert_invalid urmeaza un modulul ce trebuie sa dea eroare si dupa un string indicand eroarea ce ar trebui ridicata
@@ -210,6 +210,39 @@ class Interpretor:
 			#assert-ul merge perfect
 			return "ok"
 		
+
+		if ast.children[self.wasmPozEval[-1]].token == "assert_invalid":
+			# in cazul unui assert invalid, nodul AST va avea 3 urmasi: token-ul cu eticheta lui,
+			# modului care trebuie verificat si tipul de eroare
+			# va arata, ca exemplu, sub forma de mai jos:
+			# 	(assert_invalid
+			#		(module (func $type-empty-i32 (result i32) (if (i32.const 0) (then))))
+			#		"type mismatch"
+			#	)
+			# numele functiei poate sa lipseasca
+			# cautam numele functiei (sau ii adaugam fortat unul ca placeholder) si inseram un call
+			numeFunctie = self.getFunctionNameFromModule(ast.children[1])
+
+			self.wasmPozEval.append(0)
+			err = self.wasmEval(ast.children[1])
+			self.wasmPozEval.pop()
+			
+			ast.children.insert(2, AST.AST())
+			ast.children[2].children = [tokenizer.Token("keyword", "call"), tokenizer.Token("alias", numeFunctie)]
+			
+
+			self.wasmPozEval.append(0)
+			err = self.wasmEval(ast.children[2])
+			self.wasmPozEval.pop()
+			self.wasmPozEval[-1] += 4
+
+			# print(err, "\n")
+
+			if "expected" in err.lower() or "mismatch" in err.lower() or "operator" in err.lower():
+				return "ok"
+			
+			return "assert not validated"
+
 		if ast.children[self.wasmPozEval[-1]].token=="assert_malformed": # verificam daca ceea ce e pus intre ghilimele in modulul cu quote e ok
 			#	--- unul dintre cazuri e urmatorul:
 			#
@@ -239,6 +272,7 @@ class Interpretor:
 			
 			codEroare = interpret(codNou, printExecutionEnd=False)
 			self.wasmPozEval[-1] += 3
+			
 			if codEroare == "unexpected token" or codEroare == "inline function type":
 				return "ok"
 				
@@ -246,7 +280,23 @@ class Interpretor:
 		
 		return ast.children[self.wasmPozEval[-1]].token+" not implemented"
 
-	def getCodeFromQuoteModule(ast : AST.AST): # dat fiind un nod de ast, functia returneaza concatenarea token-urilor (cu endline-uri) urmase ale nodului respectiv intr-un bloc de tip modul
+	# functia cauta in mod recursiv un token de tip "func" si returneaza alias-ul lui (daca nu exista adauga un alias ca placeholder)
+	def getFunctionNameFromModule(self, ast : AST.AST):
+		if len(ast.children) == 0:
+			return ""
+		if isinstance(ast.children[0], tokenizer.Token) and ast.children[0].token == "func":
+			if isinstance(ast.children[1], AST.AST) or not "$" in ast.children[1].token:
+				ast.children.insert(1, tokenizer.Token("alias", "$placeholderNameForUnnamedFunctions"))
+			return ast.children[1].token
+		for nodUrmator in ast.children:
+			if isinstance(nodUrmator, AST.AST):
+				ans = self.getFunctionNameFromModule(nodUrmator)
+				if ans != "":
+					return ans
+		return ""
+
+
+	def getCodeFromQuoteModule(ast : AST.AST): # dat fiind un nod de ast, functia returneaza concatenarea token-urilor de tip quote (cu endline-uri) urmase ale nodului respectiv intr-un bloc de tip module
 		return  "(module\n" + "\n".join([ x.token[1:-1] for x in ast.children if isinstance(x, tokenizer.Token) and x.token[0] == '"']) + "\n)\n"
 
 	#helper, spune ce tip de structura este ast-ul pentru if
