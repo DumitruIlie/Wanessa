@@ -38,6 +38,8 @@ class ASTChecker:
         
         # daca nodul este de tip "if"
         # atunci verifica daca structura e buna
+        if not isinstance(nod, AST.AST):
+            return "expected expresion but found "+nod
         errUrm = "seems fine"
         if len(nod.children) > 0 and isinstance(nod.children[0], tokenizer.Token):
             # are label nodul actual

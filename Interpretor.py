@@ -574,6 +574,8 @@ class Interpretor:
 			#apel functie "exemplu"
 			if ast.children[self.wasmPozEval[-1]].tokType!="string":
 				return "expected function name string after function invoke"
+			if ast.children[self.wasmPozEval[-1]].token not in self.functiiWasm:
+				return "unexpected token"
 			F=self.functiiWasm[ast.children[self.wasmPozEval[-1]].token]
 			self.wasmPozEval[-1]+=1
 			ans=self.wasmCallFunc(ast, F)
@@ -583,6 +585,8 @@ class Interpretor:
 			#apel functie $exemplu
 			if ast.children[self.wasmPozEval[-1]].tokType!="alias":
 				return "expected function label after function call"
+			if ast.children[self.wasmPozEval[-1]].token not in self.functiiWasm:
+				return "unexpected token"
 			F=self.functiiWasm[ast.children[self.wasmPozEval[-1]].token]
 			self.wasmPozEval[-1]+=1
 			ans=self.wasmCallFunc(ast, F)
