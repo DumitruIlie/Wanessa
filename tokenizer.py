@@ -1,8 +1,5 @@
 def listaTipuriTokene():
-	return {
-			#i think these are done
-			
-			#if
+	return {#if
 			"if":"keyword",\
 			"then":"keyword",\
 			"else":"keyword",\

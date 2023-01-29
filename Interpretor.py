@@ -238,7 +238,7 @@ class Interpretor:
 
 			# print(err, "\n")
 
-			if "expected" in err.lower() or "mismatch" in err.lower() or "operator" in err.lower():
+			if "expected" in err.lower() or "mismatch" in err.lower() or "operator" in err.lower() or "unknown label" in err.lower():
 				return "ok"
 			
 			return "assert not validated"
@@ -628,7 +628,9 @@ class Interpretor:
 		
 		if t.token in wasmFunctiiBaza:
 			#o functie aplicata pe i32 sau i64
-			if isinstance(ast.children[self.wasmPozEval[-1]], AST.AST):
+			if len(ast.children)<=self.wasmPozEval[-1]:
+				pass
+			elif isinstance(ast.children[self.wasmPozEval[-1]], AST.AST):
 				self.wasmPozEval.append(0)
 				x=self.wasmEvalNumber(ast.children[self.wasmPozEval[-2]])
 				self.wasmPozEval.pop()
@@ -642,7 +644,9 @@ class Interpretor:
 				return x
 			
 			if wasmAritateFunctii[t.token]==2:
-				if isinstance(ast.children[self.wasmPozEval[-1]], AST.AST):
+				if len(ast.children)<=self.wasmPozEval[-1]:
+					pass
+				elif isinstance(ast.children[self.wasmPozEval[-1]], AST.AST):
 					self.wasmPozEval.append(0)
 					y=self.wasmEvalNumber(ast.children[self.wasmPozEval[-2]])
 					self.wasmPozEval.pop()
@@ -741,6 +745,9 @@ class Interpretor:
 					return "unknown label"
 			elif ast.children[self.wasmPozEval[-1]].tokType=="number":
 				brIndex=Interpretor.wasmTokenToNumber(ast.children[self.wasmPozEval[-1]])
+				print(brIndex, self.wasmBlocksCount)
+				if brIndex>=self.wasmBlocksCount:
+					return "unknown label"
 			else:
 				return "unspecified label or index for branch"
 			self.wasmPozEval[-1]+=1
@@ -765,6 +772,9 @@ class Interpretor:
 					return "unknown label"
 			elif ast.children[self.wasmPozEval[-1]].tokType=="number":
 				brIndex=Interpretor.wasmTokenToNumber(ast.children[self.wasmPozEval[-1]])
+				print(brIndex, self.wasmBlocksCount)
+				if brIndex>=self.wasmBlocksCount:
+					return "unknown label"
 			else:
 				return "unspecified label or index for br_if"
 			self.wasmPozEval[-1]+=1
@@ -812,8 +822,12 @@ class Interpretor:
 			if x=="type mismatch":
 				return x
 			if -1<x._val<len(brIndices):
-				return ("skip to block index", brIndices[x._val], self.wasmStack[-1])
-			return ("skip to block index", brIndices[-1], self.wasmStack[-1])
+				br_index=brIndices[x._val]
+			else:
+				br_index=brIndices[-1]
+			if br_index<self.wasmBlocksCount:
+				return ("skip to block index", br_index, self.wasmStack[-1])
+			return "unknown label"
 		
 		#operatii de debug si ajutor pentru debug; se pot scoate fara problema
 		if t.token=="print_level":
@@ -883,20 +897,24 @@ def interpret(code, printExecutionEnd=True):
 	A=AST.makeAST(T.tokens)
 	errCode = ASTChecker.ASTChecker().checkAST(A)
 	if errCode != "seems fine":
-		print(errCode)
+		if printExecutionEnd:
+			print(errCode)
 		return errCode
 
 	
 	if not isinstance(A, AST.AST):
-		print("code cannot be interpreted because "+A)
+		if printExecutionEnd:
+			print("code cannot be interpreted because "+A)
 		return A
 	if not A.correct:
-		print("code returns error: "+A.assertError)
+		if printExecutionEnd:
+			print("code returns error: "+A.assertError)
 		return A.assertError
 	interpretor=Interpretor()
 	ans=interpretor.wasmEval(A)
 	if ans!="":
-		print(ans)
+		if printExecutionEnd:
+			print(ans)
 		return ans
 	if printExecutionEnd:
 		print("smooth sailing")
@@ -911,14 +929,17 @@ def interpretMultipleFiles(fisiere, printExecutionEnd=True):
 		A=AST.makeAST(T.tokens)
 		errCode = ASTChecker.ASTChecker().checkAST(A)
 		if errCode != "seems fine":
-			print(errCode)
+			if printExecutionEnd:
+				print(errCode)
 			return errCode
 
 		if not isinstance(A, AST.AST):
-			print("code cannot be interpreted because "+A)
+			if printExecutionEnd:
+				print("code cannot be interpreted because "+A)
 			return A
 		if not A.correct:
-			print("code returns error: "+A.assertError)
+			if printExecutionEnd:
+				print("code returns error: "+A.assertError)
 			return A.assertError
 		ASTs.append(A)
 	interpretor=Interpretor()
@@ -926,7 +947,8 @@ def interpretMultipleFiles(fisiere, printExecutionEnd=True):
 		#print(ast)
 		ans=interpretor.wasmEval(ast)
 		if ans!="":
-			print(ans)
+			if printExecutionEnd:
+				print(ans)
 			return ans
 	if printExecutionEnd:
 		print("smooth sailing")

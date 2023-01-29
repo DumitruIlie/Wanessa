@@ -20,7 +20,7 @@ class ASTChecker:
 
     def checkConstToken(self, nod : AST):
         # un nod cu label-ul const ar trebui sa primeasca doar un numar, deci 2 tokeni
-        if len(nod.children) < 2 or len(nod.children) > 2 or \
+        if len(nod.children) < 2 or \
             not isinstance(nod.children[0], tokenizer.Token) or not isinstance(nod.children[1], tokenizer.Token):
             
             return "unexpected end of node"
