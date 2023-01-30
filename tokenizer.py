@@ -90,6 +90,7 @@ def listaTipuriTokene():
 			"i64.extend8_s":"keyword",\
 			"i64.extend16_s":"keyword",\
 			"i64.extend32_s":"keyword",\
+			"i64.extend_i32_u":"keyword",\
 			"i64.eqz":"keyword",\
 			"i64.eq":"keyword",\
 			"i64.ne":"keyword",\

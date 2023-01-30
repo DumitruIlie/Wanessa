@@ -211,6 +211,12 @@ class i64:
         if x>=2_147_483_648:
             x-=2_147_483_648*2
         return i64(x)
+    def extend_i32_u(t1):
+        x=t1._val
+        x&=0xffffffff
+        if x<0:
+            x+=2_147_483_648*2
+        return i64(x)
     def eqz(t1):
         if isinstance(t1,i64) !=1:
             return ERROR_TYPE_MISMATCH
