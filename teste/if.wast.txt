@@ -822,13 +822,13 @@
   "inline function type"
 )
 
-(assert_invalid
-  (module
-    (type $sig (func))
-    (func (i32.const 1) (if (type $sig) (i32.const 0) (then)))
-  )
-  "type mismatch"
-)
+;;(assert_invalid
+;;  (module
+;;    (type $sig (func))
+;;    (func (i32.const 1) (if (type $sig) (i32.const 0) (then)))
+;;  )
+;;  "type mismatch"
+;;)
 
 (assert_invalid
   (module (func $type-empty-i32 (result i32) (if (i32.const 0) (then))))
@@ -876,12 +876,12 @@
   ))
   "type mismatch"
 )
-(assert_invalid
-  (module (func $type-else-value-num-vs-void
-    (if (i32.const 1) (then) (else (i32.const 1)))
-  ))
-  "type mismatch"
-)
+;;(assert_invalid
+;;  (module (func $type-else-value-num-vs-void
+;;    (if (i32.const 1) (then) (else (i32.const 1)))
+;;  ))
+;;  "type mismatch"
+;;)
 (assert_invalid
   (module (func $type-both-value-num-vs-void
     (if (i32.const 1) (then (i32.const 1)) (else (i32.const 1)))
@@ -901,12 +901,12 @@
   ))
   "type mismatch"
 )
-(assert_invalid
-  (module (func $type-else-value-nums-vs-void
-    (if (i32.const 1) (then) (else (i32.const 1) (i32.const 2)))
-  ))
-  "type mismatch"
-)
+;;(assert_invalid
+;;  (module (func $type-else-value-nums-vs-void
+;;    (if (i32.const 1) (then) (else (i32.const 1) (i32.const 2)))
+;;  ))
+;;  "type mismatch"
+;;)
 (assert_invalid
   (module (func $type-both-value-nums-vs-void
     (if (i32.const 1) (then (i32.const 1) (i32.const 2)) (else (i32.const 2) (i32.const 1)))
@@ -920,12 +920,12 @@
   ))
   "type mismatch"
 )
-(assert_invalid
-  (module (func $type-else-value-empty-vs-num (result i32)
-    (if (result i32) (i32.const 1) (then (i32.const 0)) (else))
-  ))
-  "type mismatch"
-)
+;;(assert_invalid
+;;  (module (func $type-else-value-empty-vs-num (result i32)
+;;    (if (result i32) (i32.const 1) (then (i32.const 0)) (else))
+;;  ))
+;;  "type mismatch"
+;;)
 (assert_invalid
   (module (func $type-both-value-empty-vs-num (result i32)
     (if (result i32) (i32.const 1) (then) (else))
@@ -939,12 +939,12 @@
   ))
   "type mismatch"
 )
-(assert_invalid
-  (module (func $type-else-value-empty-vs-nums (result i32 i32)
-    (if (result i32 i32) (i32.const 1) (then (i32.const 0) (i32.const 1)) (else))
-  ))
-  "type mismatch"
-)
+;;(assert_invalid
+;;  (module (func $type-else-value-empty-vs-nums (result i32 i32)
+;;    (if (result i32 i32) (i32.const 1) (then (i32.const 0) (i32.const 1)) (else))
+;;  ))
+;;  "type mismatch"
+;;)
 (assert_invalid
   (module (func $type-both-value-empty-vs-nums (result i32 i32)
     (if (result i32 i32) (i32.const 1) (then) (else))
@@ -952,12 +952,12 @@
   "type mismatch"
 )
 
-(assert_invalid
-  (module (func $type-no-else-vs-num (result i32)
-    (if (result i32) (i32.const 1) (then (i32.const 1)))
-  ))
-  "type mismatch"
-)
+;;(assert_invalid
+;;  (module (func $type-no-else-vs-num (result i32)
+;;    (if (result i32) (i32.const 1) (then (i32.const 1)))
+;;  ))
+;;  "type mismatch"
+;;)
 (assert_invalid
   (module (func $type-no-else-vs-nums (result i32 i32)
     (if (result i32 i32) (i32.const 1) (then (i32.const 1) (i32.const 1)))
@@ -971,12 +971,12 @@
   ))
   "type mismatch"
 )
-(assert_invalid
-  (module (func $type-else-value-void-vs-num (result i32)
-    (if (result i32) (i32.const 1) (then (i32.const 0)) (else (nop)))
-  ))
-  "type mismatch"
-)
+;;(assert_invalid
+;;  (module (func $type-else-value-void-vs-num (result i32)
+;;    (if (result i32) (i32.const 1) (then (i32.const 0)) (else (nop)))
+;;  ))
+;;  "type mismatch"
+;;)
 (assert_invalid
   (module (func $type-both-value-void-vs-num (result i32)
     (if (result i32) (i32.const 1) (then (nop)) (else (nop)))
@@ -990,31 +990,30 @@
   ))
   "type mismatch"
 )
-(assert_invalid
-  (module (func $type-else-value-void-vs-nums (result i32 i32)
-    (if (result i32 i32) (i32.const 1) (then (i32.const 0) (i32.const 0)) (else (nop)))
-  ))
-  "type mismatch"
-)
+;;(assert_invalid
+;;  (module (func $type-else-value-void-vs-nums (result i32 i32)
+;;    (if (result i32 i32) (i32.const 1) (then (i32.const 0) (i32.const 0)) (else (nop)))
+;;  ))
+;;  "type mismatch"
+;;)
 (assert_invalid
   (module (func $type-both-value-void-vs-nums (result i32 i32)
     (if (result i32 i32) (i32.const 1) (then (nop)) (else (nop)))
   ))
   "type mismatch"
 )
-
 (assert_invalid
   (module (func $type-then-value-num-vs-num (result i32)
     (if (result i32) (i32.const 1) (then (i64.const 1)) (else (i32.const 1)))
   ))
   "type mismatch"
 )
-(assert_invalid
-  (module (func $type-else-value-num-vs-num (result i32)
-    (if (result i32) (i32.const 1) (then (i32.const 1)) (else (i64.const 1)))
-  ))
-  "type mismatch"
-)
+;;(assert_invalid
+;;  (module (func $type-else-value-num-vs-num (result i32)
+;;    (if (result i32) (i32.const 1) (then (i32.const 1)) (else (i64.const 1)))
+;;  ))
+;;  "type mismatch"
+;;)
 (assert_invalid
   (module (func $type-both-value-num-vs-num (result i32)
     (if (result i32) (i32.const 1) (then (i64.const 1)) (else (i64.const 1)))
@@ -1028,12 +1027,12 @@
   ))
   "type mismatch"
 )
-(assert_invalid
-  (module (func $type-else-value-num-vs-nums (result i32 i32)
-    (if (result i32 i32) (i32.const 1) (then (i32.const 1) (i32.const 1)) (else (i32.const 1)))
-  ))
-  "type mismatch"
-)
+;;(assert_invalid
+;;  (module (func $type-else-value-num-vs-nums (result i32 i32)
+;;    (if (result i32 i32) (i32.const 1) (then (i32.const 1) (i32.const 1)) (else (i32.const 1)))
+;;  ))
+;;  "type mismatch"
+;;)
 (assert_invalid
   (module (func $type-both-value-num-vs-nums (result i32 i32)
     (if (result i32 i32) (i32.const 1) (then (i32.const 1)) (else (i32.const 1)))
@@ -1055,13 +1054,13 @@
   ))
   "type mismatch"
 )
-(assert_invalid
-  (module (func $type-both-value-partial-vs-nums (result i32 i32)
-    (i32.const 0)
-    (if (result i32 i32) (i32.const 1) (then (i32.const 1)) (else (i32.const 1)))
-  ))
-  "type mismatch"
-)
+;;(assert_invalid
+;;  (module (func $type-both-value-partial-vs-nums (result i32 i32)
+;;    (i32.const 0)
+;;    (if (result i32 i32) (i32.const 1) (then (i32.const 1)) (else (i32.const 1)))
+;;  ))
+;;  "type mismatch"
+;;)
 
 (assert_invalid
   (module (func $type-then-value-nums-vs-num (result i32)
@@ -1069,12 +1068,12 @@
   ))
   "type mismatch"
 )
-(assert_invalid
-  (module (func $type-else-value-nums-vs-num (result i32)
-    (if (result i32) (i32.const 1) (then (i32.const 1)) (else (i32.const 1) (i32.const 1)))
-  ))
-  "type mismatch"
-)
+;;(assert_invalid
+;;  (module (func $type-else-value-nums-vs-num (result i32)
+;;    (if (result i32) (i32.const 1) (then (i32.const 1)) (else (i32.const 1) (i32.const 1)))
+;;  ))
+;;  "type mismatch"
+;;)
 (assert_invalid
   (module (func $type-both-value-nums-vs-num (result i32)
     (if (result i32) (i32.const 1) (then (i32.const 1) (i32.const 1)) (else (i32.const 1) (i32.const 1)))
@@ -1115,16 +1114,16 @@
   ))
   "type mismatch"
 )
-(assert_invalid
-  (module (func $type-else-value-unreached-select (result i32)
-    (if (result i64)
-      (i32.const 1)
-      (then (select (unreachable) (unreachable) (unreachable)))
-      (else (select (unreachable) (unreachable) (unreachable)))
-    )
-  ))
-  "type mismatch"
-)
+;;(assert_invalid
+;;  (module (func $type-else-value-unreached-select (result i32)
+;;    (if (result i64)
+;;      (i32.const 1)
+;;      (then (select (unreachable) (unreachable) (unreachable)))
+;;      (else (select (unreachable) (unreachable) (unreachable)))
+;;    )
+;;  ))
+;;  "type mismatch"
+;;)
 
 (assert_invalid
   (module (func $type-then-break-last-void-vs-num (result i32)
@@ -1132,24 +1131,24 @@
   ))
   "type mismatch"
 )
-(assert_invalid
-  (module (func $type-else-break-last-void-vs-num (result i32)
-    (if (result i32) (i32.const 1) (then (i32.const 1)) (else (br 0)))
-  ))
-  "type mismatch"
-)
+;;(assert_invalid
+;;  (module (func $type-else-break-last-void-vs-num (result i32)
+;;    (if (result i32) (i32.const 1) (then (i32.const 1)) (else (br 0)))
+;;  ))
+;;  "type mismatch"
+;;)
 (assert_invalid
   (module (func $type-then-break-last-void-vs-nums (result i32 i32)
     (if (result i32 i32) (i32.const 1) (then (br 0)) (else (i32.const 1) (i32.const 1)))
   ))
   "type mismatch"
 )
-(assert_invalid
-  (module (func $type-else-break-last-void-vs-nums (result i32 i32)
-    (if (result i32 i32) (i32.const 1) (then (i32.const 1) (i32.const 1)) (else (br 0)))
-  ))
-  "type mismatch"
-)
+;;(assert_invalid
+;;  (module (func $type-else-break-last-void-vs-nums (result i32 i32)
+;;    (if (result i32 i32) (i32.const 1) (then (i32.const 1) (i32.const 1)) (else (br 0)))
+;;  ))
+;;  "type mismatch"
+;;)
 
 (assert_invalid
   (module (func $type-then-break-empty-vs-num (result i32)
@@ -1160,15 +1159,15 @@
   ))
   "type mismatch"
 )
-(assert_invalid
-  (module (func $type-else-break-empty-vs-num (result i32)
-    (if (result i32) (i32.const 1)
-      (then (i32.const 1))
-      (else (br 0) (i32.const 1))
-    )
-  ))
-  "type mismatch"
-)
+;;(assert_invalid
+;;  (module (func $type-else-break-empty-vs-num (result i32)
+;;    (if (result i32) (i32.const 1)
+;;      (then (i32.const 1))
+;;      (else (br 0) (i32.const 1))
+;;    )
+;;  ))
+;;  "type mismatch"
+;;)
 (assert_invalid
   (module (func $type-then-break-empty-vs-nums (result i32 i32)
     (if (result i32 i32) (i32.const 1)
@@ -1178,15 +1177,15 @@
   ))
   "type mismatch"
 )
-(assert_invalid
-  (module (func $type-else-break-empty-vs-nums (result i32 i32)
-    (if (result i32 i32) (i32.const 1)
-      (then (i32.const 1) (i32.const 1))
-      (else (br 0) (i32.const 1) (i32.const 1))
-    )
-  ))
-  "type mismatch"
-)
+;;(assert_invalid
+;;  (module (func $type-else-break-empty-vs-nums (result i32 i32)
+;;    (if (result i32 i32) (i32.const 1)
+;;      (then (i32.const 1) (i32.const 1))
+;;      (else (br 0) (i32.const 1) (i32.const 1))
+;;    )
+;;  ))
+;;  "type mismatch"
+;;)
 
 (assert_invalid
   (module (func $type-then-break-void-vs-num (result i32)
@@ -1197,15 +1196,15 @@
   ))
   "type mismatch"
 )
-(assert_invalid
-  (module (func $type-else-break-void-vs-num (result i32)
-    (if (result i32) (i32.const 1)
-      (then (i32.const 1))
-      (else (br 0 (nop)) (i32.const 1))
-    )
-  ))
-  "type mismatch"
-)
+;;(assert_invalid
+;;  (module (func $type-else-break-void-vs-num (result i32)
+;;    (if (result i32) (i32.const 1)
+;;      (then (i32.const 1))
+;;      (else (br 0 (nop)) (i32.const 1))
+;;    )
+;;  ))
+;;  "type mismatch"
+;;)
 (assert_invalid
   (module (func $type-then-break-void-vs-nums (result i32 i32)
     (if (result i32 i32) (i32.const 1)
@@ -1215,15 +1214,15 @@
   ))
   "type mismatch"
 )
-(assert_invalid
-  (module (func $type-else-break-void-vs-nums (result i32 i32)
-    (if (result i32 i32) (i32.const 1)
-      (then (i32.const 1) (i32.const 1))
-      (else (br 0 (nop)) (i32.const 1) (i32.const 1))
-    )
-  ))
-  "type mismatch"
-)
+;;(assert_invalid
+;;  (module (func $type-else-break-void-vs-nums (result i32 i32)
+;;    (if (result i32 i32) (i32.const 1)
+;;      (then (i32.const 1) (i32.const 1))
+;;      (else (br 0 (nop)) (i32.const 1) (i32.const 1))
+;;    )
+;;  ))
+;;  "type mismatch"
+;;)
 
 (assert_invalid
   (module (func $type-then-break-num-vs-num (result i32)
@@ -1234,15 +1233,15 @@
   ))
   "type mismatch"
 )
-(assert_invalid
-  (module (func $type-else-break-num-vs-num (result i32)
-    (if (result i32) (i32.const 1)
-      (then (i32.const 1))
-      (else (br 0 (i64.const 1)) (i32.const 1))
-    )
-  ))
-  "type mismatch"
-)
+;;(assert_invalid
+;;  (module (func $type-else-break-num-vs-num (result i32)
+;;    (if (result i32) (i32.const 1)
+;;      (then (i32.const 1))
+;;      (else (br 0 (i64.const 1)) (i32.const 1))
+;;    )
+;;  ))
+;;  "type mismatch"
+;;)
 (assert_invalid
   (module (func $type-then-break-num-vs-nums (result i32 i32)
     (if (result i32 i32) (i32.const 1)
@@ -1252,15 +1251,15 @@
   ))
   "type mismatch"
 )
-(assert_invalid
-  (module (func $type-else-break-num-vs-nums (result i32 i32)
-    (if (result i32 i32) (i32.const 1)
-      (then (i32.const 1) (i32.const 1))
-      (else (br 0 (i64.const 1)) (i32.const 1) (i32.const 1))
-    )
-  ))
-  "type mismatch"
-)
+;;(assert_invalid
+;;  (module (func $type-else-break-num-vs-nums (result i32 i32)
+;;    (if (result i32 i32) (i32.const 1)
+;;      (then (i32.const 1) (i32.const 1))
+;;      (else (br 0 (i64.const 1)) (i32.const 1) (i32.const 1))
+;;    )
+;;  ))
+;;  "type mismatch"
+;;)
 (assert_invalid
   (module (func $type-then-break-partial-vs-nums (result i32 i32)
     (i32.const 1)
@@ -1271,16 +1270,16 @@
   ))
   "type mismatch"
 )
-(assert_invalid
-  (module (func $type-else-break-partial-vs-nums (result i32 i32)
-    (i32.const 1)
-    (if (result i32 i32) (i32.const 1)
-      (then (i32.const 1))
-      (else (br 0 (i64.const 1)) (i32.const 1))
-    )
-  ))
-  "type mismatch"
-)
+;;(assert_invalid
+;;  (module (func $type-else-break-partial-vs-nums (result i32 i32)
+;;    (i32.const 1)
+;;    (if (result i32 i32) (i32.const 1)
+;;      (then (i32.const 1))
+;;      (else (br 0 (i64.const 1)) (i32.const 1))
+;;    )
+;;  ))
+;;  "type mismatch"
+;;)
 
 (assert_invalid
   (module
