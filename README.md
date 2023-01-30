@@ -58,7 +58,7 @@ Functia principala este interpret, aceasta se apeleaza o singura data pentru lis
 
 Standardul WebAssembly permite definirea unor semnaturi speciale pentru functii care pot deveni mai departe tipuri de date (un fel de pointer la functie din C declarat cu typedef). Programul nostru nu permite asa ceva si la intalnirea unei asemenea definiri va returna o eroare.
 
-Operatiile in virgula mobila nu sunt definite, programul nostru nu este in stare sa interpreteze alte tipuri de date decat numere intregi (cu sau fara semn), totusi am creat o librarie cu fixed point ce poate fi folosita (destul de rudimentara, lipseste impartirea, momentan). Blocurile de loop nu sunt implementate (inca). Nu exista pointeri, deci nici vectori. Nu exista conceptul de memorie, memorie globala.
+Operatiile in virgula mobila nu sunt definite, programul nostru nu are functionalitatea de a interpreta alte tipuri de date decat numere intregi (cu sau fara semn), totusi am creat o librarie cu fixed point ce poate fi folosita (destul de rudimentara, lipseste impartirea, momentan). Blocurile de loop nu sunt implementate (inca). Nu exista pointeri, deci nici vectori. Nu exista conceptul de memorie, memorie globala.
 
 ## Echipa
 
