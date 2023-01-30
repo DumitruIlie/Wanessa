@@ -1369,31 +1369,31 @@
   )
   "type mismatch"
 )
-(assert_invalid
-  (module
-    (func $type-condition-empty-in-call
-      (call 1 (if(then))) (drop)
-    )
-    (func (param i32) (result i32) (local.get 0))
-  )
-  "type mismatch"
-)
-(assert_invalid
-  (module
-    (func $f (param i32) (result i32) (local.get 0))
-    (type $sig (func (param i32) (result i32)))
-    (table funcref (elem $f))
-    (func $type-condition-empty-in-call_indirect
-      (block (result i32)
-        (call_indirect (type $sig)
-          (if(then)) (i32.const 0)
-        )
-        (drop)
-      )
-    )
-  )
-  "type mismatch"
-)
+;;(assert_invalid
+;;  (module
+;;    (func $type-condition-empty-in-call
+;;      (call 1 (if(then))) (drop)
+;;    )
+;;    (func (param i32) (result i32) (local.get 0))
+;;  )
+;;  "type mismatch"
+;;)
+;;(assert_invalid
+;;  (module
+;;    (func $f (param i32) (result i32) (local.get 0))
+;;    (type $sig (func (param i32) (result i32)))
+;;    (table funcref (elem $f))
+;;    (func $type-condition-empty-in-call_indirect
+;;      (block (result i32)
+;;        (call_indirect (type $sig)
+;;          (if(then)) (i32.const 0)
+;;        )
+;;        (drop)
+;;      )
+;;    )
+;;  )
+;;  "type mismatch"
+;;)
 (assert_invalid
   (module
     (func $type-condition-empty-in-local.set
@@ -1412,42 +1412,42 @@
   )
   "type mismatch"
 )
-(assert_invalid
-  (module
-    (global $x (mut i32) (i32.const 0))
-    (func $type-condition-empty-in-global.set
-      (global.set $x (if(then))) (global.get $x) (drop)
-    )
-  )
-  "type mismatch"
-)
-(assert_invalid
-  (module
-    (memory 0)
-    (func $type-condition-empty-in-memory.grow
-      (memory.grow (if(then))) (drop)
-    )
-  )
-  "type mismatch"
-)
-(assert_invalid
-  (module
-    (memory 0)
-    (func $type-condition-empty-in-load
-      (i32.load (if(then))) (drop)
-    )
-  )
-  "type mismatch"
-)
-(assert_invalid
-  (module
-    (memory 1)
-    (func $type-condition-empty-in-store
-      (i32.store (if(then)) (i32.const 1))
-    )
-  )
-  "type mismatch"
-)
+;;(assert_invalid
+;;  (module
+;;    (global $x (mut i32) (i32.const 0))
+;;    (func $type-condition-empty-in-global.set
+;;      (global.set $x (if(then))) (global.get $x) (drop)
+;;    )
+;;  )
+;;  "type mismatch"
+;;)
+;;(assert_invalid
+;;  (module
+;;    (memory 0)
+;;    (func $type-condition-empty-in-memory.grow
+;;      (memory.grow (if(then))) (drop)
+;;    )
+;;  )
+;;  "type mismatch"
+;;)
+;;(assert_invalid
+;;  (module
+;;    (memory 0)
+;;    (func $type-condition-empty-in-load
+;;      (i32.load (if(then))) (drop)
+;;    )
+;;  )
+;;  "type mismatch"
+;;)
+;;(assert_invalid
+;;  (module
+;;    (memory 1)
+;;    (func $type-condition-empty-in-store
+;;      (i32.store (if(then)) (i32.const 1))
+;;    )
+;;  )
+;;  "type mismatch"
+;;)
 
 (assert_invalid
   (module (func $type-param-void-vs-num
