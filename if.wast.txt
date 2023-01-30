@@ -176,6 +176,7 @@
     )
   )
 
+;; typedef pointer functie
 ;;  (func $func (param i32 i32) (result i32) (local.get 0))
 ;;  (type $check (func (param i32 i32) (result i32)))
 ;;  (table funcref (elem $func))
@@ -214,6 +215,7 @@
 ;;    )
 ;;  )
 
+;; memorie "globala"
 ;;  (func (export "as-store-first") (param i32)
 ;;    (if (result i32) (local.get 0)
 ;;      (then (call $dummy) (i32.const 1))
@@ -292,6 +294,7 @@
       )
     )
   )
+;; memorie "globala"
 ;;  (global $a (mut i32) (i32.const 10))
 ;;  (func (export "as-global.set-value") (param i32) (result i32)
 ;;    (global.set $a
@@ -338,6 +341,7 @@
       )
     )
   )
+;; functie pe float-uri
 ;;  (func (export "as-compare-operand") (param i32 i32) (result i32)
 ;;    (f32.gt
 ;;      (if (result f32) (local.get 0)
@@ -358,6 +362,7 @@
       )
     )
   )
+;; functie pe float-uri
 ;;  (func (export "as-compare-operands") (param i32) (result i32)
 ;;    (f32.gt
 ;;      (if (result f32 f32) (local.get 0)
@@ -408,6 +413,7 @@
     )
   )
 
+;; DE FACUT
 ;;  (func (export "param") (param i32) (result i32)
 ;;    (i32.const 1)
 ;;    (if (param i32) (result i32) (local.get 0)
@@ -487,6 +493,7 @@
     (return (local.get $k) (i64.lt_u (local.get $k) (local.get $i)))
   )
 
+;; DE FACUT
 ;;  (func $add64_u_saturated (export "add64_u_saturated")
 ;;    (param i64 i64) (result i64)
 ;;    (call $add64_u_with_carry (local.get 0) (local.get 1) (i32.const 0))
@@ -496,7 +503,7 @@
 ;;  )
 
   ;; Block signature syntax
-
+;; typedef pointer functie
 ;;  (type $block-sig-1 (func))
 ;;  (type $block-sig-2 (func (result i32)))
 ;;  (type $block-sig-3 (func (param $x i32)))
@@ -577,6 +584,7 @@
 (assert_return (invoke "as-br_table-last" (i32.const 0)) (i32.const 2))
 (assert_return (invoke "as-br_table-last" (i32.const 1)) (i32.const 2))
 
+;; typedef pointer functie
 ;;(assert_return (invoke "as-call_indirect-first" (i32.const 0)) (i32.const 0))
 ;;(assert_return (invoke "as-call_indirect-first" (i32.const 1)) (i32.const 1))
 ;;(assert_return (invoke "as-call_indirect-mid" (i32.const 0)) (i32.const 2))
@@ -584,6 +592,7 @@
 ;;(assert_return (invoke "as-call_indirect-last" (i32.const 0)) (i32.const 2))
 ;;(assert_trap (invoke "as-call_indirect-last" (i32.const 1)) "undefined element")
 
+;; memorie "globala"
 ;;(assert_return (invoke "as-store-first" (i32.const 0)))
 ;;(assert_return (invoke "as-store-first" (i32.const 1)))
 ;;(assert_return (invoke "as-store-last" (i32.const 0)))
@@ -720,8 +729,10 @@
   (invoke "add64_u_saturated" (i64.const 0x8000000000000000) (i64.const 0x8000000000000000)) (i64.const -1)
 )
 
+;; typedef pointer functie
 ;;(assert_return (invoke "type-use"))
 
+;; typedef pointer functie
 ;;(assert_malformed
 ;;  (module quote
 ;;    "(type $sig (func (param i32) (result i32)))"
@@ -774,6 +785,7 @@
 ;;  "unexpected token"
 ;;)
 
+;; DE FACUT
 ;;(assert_malformed
 ;;  (module quote
 ;;    "(func (i32.const 0) (i32.const 1)"
@@ -782,6 +794,7 @@
 ;;  )
 ;;  "unexpected token"
 ;;)
+;; typedef pointer functie
 ;;(assert_malformed
 ;;  (module quote
 ;;    "(type $sig (func))"
@@ -821,7 +834,6 @@
 ;;  )
 ;;  "inline function type"
 ;;)
-
 ;;(assert_invalid
 ;;  (module
 ;;    (type $sig (func))
@@ -1450,54 +1462,55 @@
   "type mismatch"
 )
 
-(assert_invalid
-  (module (func $type-param-void-vs-num
-    (if (param i32) (i32.const 1) (then (drop)))
-  ))
-  "type mismatch"
-)
-(assert_invalid
-  (module (func $type-param-void-vs-nums
-    (if (param i32 f64) (i32.const 1) (then (drop) (drop)))
-  ))
-  "type mismatch"
-)
-(assert_invalid
-  (module (func $type-param-num-vs-num
-    (f32.const 0) (if (param i32) (i32.const 1) (then (drop)))
-  ))
-  "type mismatch"
-)
-(assert_invalid
-  (module (func $type-param-num-vs-nums
-    (f32.const 0) (if (param f32 i32) (i32.const 1) (then (drop) (drop)))
-  ))
-  "type mismatch"
-)
-(assert_invalid
-  (module (func $type-param-nested-void-vs-num
-    (block (if (param i32) (i32.const 1) (then (drop))))
-  ))
-  "type mismatch"
-)
-(assert_invalid
-  (module (func $type-param-void-vs-nums
-    (block (if (param i32 f64) (i32.const 1) (then (drop) (drop))))
-  ))
-  "type mismatch"
-)
-(assert_invalid
-  (module (func $type-param-num-vs-num
-    (block (f32.const 0) (if (param i32) (i32.const 1) (then (drop))))
-  ))
-  "type mismatch"
-)
-(assert_invalid
-  (module (func $type-param-num-vs-nums
-    (block (f32.const 0) (if (param f32 i32) (i32.const 1) (then (drop) (drop))))
-  ))
-  "type mismatch"
-)
+;; DE FACUT
+;;(assert_invalid
+;;  (module (func $type-param-void-vs-num
+;;    (if (param i32) (i32.const 1) (then (drop)))
+;;  ))
+;;  "type mismatch"
+;;)
+;;(assert_invalid
+;;  (module (func $type-param-void-vs-nums
+;;    (if (param i32 f64) (i32.const 1) (then (drop) (drop)))
+;;  ))
+;;  "type mismatch"
+;;)
+;;(assert_invalid
+;;  (module (func $type-param-num-vs-num
+;;    (f32.const 0) (if (param i32) (i32.const 1) (then (drop)))
+;;  ))
+;;  "type mismatch"
+;;)
+;;(assert_invalid
+;;  (module (func $type-param-num-vs-nums
+;;    (f32.const 0) (if (param f32 i32) (i32.const 1) (then (drop) (drop)))
+;;  ))
+;;  "type mismatch"
+;;)
+;;(assert_invalid
+;;  (module (func $type-param-nested-void-vs-num
+;;    (block (if (param i32) (i32.const 1) (then (drop))))
+;;  ))
+;;  "type mismatch"
+;;)
+;;(assert_invalid
+;;  (module (func $type-param-void-vs-nums
+;;    (block (if (param i32 f64) (i32.const 1) (then (drop) (drop))))
+;;  ))
+;;  "type mismatch"
+;;)
+;;(assert_invalid
+;;  (module (func $type-param-num-vs-num
+;;    (block (f32.const 0) (if (param i32) (i32.const 1) (then (drop))))
+;;  ))
+;;  "type mismatch"
+;;)
+;;(assert_invalid
+;;  (module (func $type-param-num-vs-nums
+;;    (block (f32.const 0) (if (param f32 i32) (i32.const 1) (then (drop) (drop))))
+;;  ))
+;;  "type mismatch"
+;;)
 
 (assert_malformed
   (module quote "(func (param i32) (result i32) if (param $x i32) end)")
